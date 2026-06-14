@@ -5,27 +5,25 @@ import {
   FaLock,
   FaRegCreditCard,
   FaMoneyBillWave,
-  FaWallet,
+  FaMobileAlt,
   FaCheckCircle,
 } from 'react-icons/fa'
 import Stepper from '../components/Stepper'
 import { useBooking } from '../context/BookingContext'
-import { useAuth } from '../context/AuthContext'
 import { createBooking } from '../services/bookingService'
 import { formatCurrency } from '../utils/format'
 
 const METHODS = [
+  { id: 'jazzcash', label: 'JazzCash', icon: FaMobileAlt },
   { id: 'card', label: 'Credit / Debit Card', icon: FaRegCreditCard },
-  { id: 'wallet', label: 'Mobile Wallet', icon: FaWallet },
   { id: 'cash', label: 'Cash on Boarding', icon: FaMoneyBillWave },
 ]
 
 export default function Payment() {
   const { draft, clearBooking } = useBooking()
-  const { user } = useAuth()
   const navigate = useNavigate()
 
-  const [method, setMethod] = useState('card')
+  const [method, setMethod] = useState('jazzcash')
   const [card, setCard] = useState({ name: '', number: '', expiry: '', cvv: '' })
   const [error, setError] = useState('')
   const [processing, setProcessing] = useState(false)
@@ -57,10 +55,20 @@ export default function Payment() {
     try {
       const booking = await createBooking({
         vehicle,
-        user,
         seats,
         payment: { method, ...card },
       })
+
+      // Gateway-hosted payment (e.g. JazzCash): the backend returns a payment
+      // object with a redirectUrl. Hand the browser off to the provider; it
+      // will return us to /payment/return after the transaction.
+      if (booking?.payment?.redirectUrl) {
+        clearBooking()
+        window.location.href = booking.payment.redirectUrl
+        return
+      }
+
+      // Methods that settle immediately (card / cash): booking is confirmed.
       clearBooking()
       navigate(`/booking/confirmation/${booking.id}`, { replace: true })
     } catch (err) {
@@ -68,6 +76,13 @@ export default function Payment() {
       setProcessing(false)
     }
   }
+
+  const payLabel =
+    method === 'cash'
+      ? 'Reserve Seats'
+      : method === 'jazzcash'
+        ? `Pay ${formatCurrency(total)} with JazzCash`
+        : `Pay ${formatCurrency(total)}`
 
   return (
     <div className="container narrow checkout">
@@ -99,6 +114,18 @@ export default function Payment() {
               })}
             </div>
           </div>
+
+          {/* JazzCash — redirect flow */}
+          {method === 'jazzcash' && (
+            <div className="card">
+              <h3 className="card-section-title">Pay with JazzCash</h3>
+              <p className="muted-note">
+                You&apos;ll be securely redirected to JazzCash to authorize{' '}
+                <strong>{formatCurrency(total)}</strong>. After paying, you&apos;ll return here
+                automatically and your booking will be confirmed.
+              </p>
+            </div>
+          )}
 
           {/* Card form */}
           {method === 'card' && (
@@ -141,17 +168,7 @@ export default function Payment() {
             </div>
           )}
 
-          {method === 'wallet' && (
-            <div className="card">
-              <h3 className="card-section-title">Mobile wallet</h3>
-              <div className="field">
-                <label>Wallet number</label>
-                <input type="tel" placeholder="+92 3XX XXXXXXX" required />
-              </div>
-              <p className="muted-note">You&apos;ll receive a prompt on your phone to approve the payment.</p>
-            </div>
-          )}
-
+          {/* Cash on boarding */}
           {method === 'cash' && (
             <div className="card">
               <p className="muted-note">
@@ -162,7 +179,10 @@ export default function Payment() {
           )}
 
           <p className="secure-note">
-            <FaLock /> This is a demo checkout — no real payment is processed.
+            <FaLock />{' '}
+            {method === 'jazzcash'
+              ? 'You will complete payment securely on JazzCash.'
+              : 'Card & cash options are simulated for this demo.'}
           </p>
         </form>
 
@@ -185,11 +205,7 @@ export default function Payment() {
               <strong>{formatCurrency(total)}</strong>
             </div>
             <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={processing} onClick={handlePay}>
-              {processing ? 'Processing…' : (
-                <>
-                  <FaLock /> {method === 'cash' ? 'Reserve Seats' : `Pay ${formatCurrency(total)}`}
-                </>
-              )}
+              {processing ? 'Processing…' : (<><FaLock /> {payLabel}</>)}
             </button>
             <Link to="/booking" className="btn btn-ghost btn-block">
               <FaArrowLeft /> Back

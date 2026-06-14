@@ -135,6 +135,25 @@ Expected response shapes:
 
 The backend must enable **CORS** for the frontend origin and hash passwords.
 
+### Payments (JazzCash redirect flow)
+`POST /bookings` with `paymentMethod: "jazzcash"` returns a booking whose
+`payment.redirectUrl` points at the gateway. The Payment page sends the browser
+there; after paying, JazzCash → backend callback → redirects back to:
+
+```
+CLIENT_ORIGIN + CLIENT_PAYMENT_RETURN_PATH?bookingId=…&status=success|failed&ref=…
+```
+
+The frontend serves that landing page at **`/payment/return`** (`PaymentReturn.jsx`),
+which reads the final booking via `GET /bookings/:id` and shows the confirmation
+(success) or a retry screen (failure). Configure the backend so:
+
+- `CLIENT_ORIGIN` = the frontend origin (e.g. `http://localhost:5173`)
+- `CLIENT_PAYMENT_RETURN_PATH` = `/payment/return`
+
+Methods that settle immediately (card / cash) return a confirmed booking with no
+`payment.redirectUrl`, and go straight to the confirmation screen.
+
 ---
 
 ## 📌 Notes

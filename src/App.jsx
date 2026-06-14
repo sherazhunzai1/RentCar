@@ -11,6 +11,7 @@ import VehicleListings from './pages/VehicleListings'
 import VehicleDetails from './pages/VehicleDetails'
 import Booking from './pages/Booking'
 import Payment from './pages/Payment'
+import PaymentReturn from './pages/PaymentReturn'
 import BookingConfirmation from './pages/BookingConfirmation'
 import MyBookings from './pages/MyBookings'
 import DriverDashboard from './pages/DriverDashboard'
@@ -48,6 +49,8 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          {/* Payment gateway callback — public so the redirect back always lands */}
+          <Route path="/payment/return" element={<PaymentReturn />} />
           <Route
             path="/booking/confirmation/:id"
             element={

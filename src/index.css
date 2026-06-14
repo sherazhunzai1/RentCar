@@ -1435,6 +1435,9 @@ button {
   margin-bottom: 14px;
   animation: pop 0.4s ease;
 }
+.confirm-check.confirm-fail {
+  color: var(--danger);
+}
 @keyframes pop {
   0% { transform: scale(0); }
   70% { transform: scale(1.15); }
