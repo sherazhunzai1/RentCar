@@ -7,10 +7,17 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Restore the session on first load.
+  // Restore the session on first load by validating the stored token.
   useEffect(() => {
-    setUser(authService.getCurrentUser())
-    setLoading(false)
+    let active = true
+    authService
+      .getCurrentUser()
+      .then((u) => active && setUser(u))
+      .catch(() => active && setUser(null))
+      .finally(() => active && setLoading(false))
+    return () => {
+      active = false
+    }
   }, [])
 
   const value = useMemo(

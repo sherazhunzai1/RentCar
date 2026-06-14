@@ -5,9 +5,9 @@ Drivers sign up, create a profile, post their vehicle (Car, SUV, Van or Bus) on 
 city-to-city route, and accept online bookings. Passengers sign up, browse listings,
 pick exact seats from a live seat map, and pay online.
 
-> This is a **frontend-only** app. Data is persisted in the browser via
-> `localStorage` through a mock service layer that is designed to be swapped for a
-> real REST API with minimal changes (see [Backend integration](#-backend-integration)).
+> The frontend is wired to a **REST API backend** through the service layer in
+> `src/services/`. Configure the API base URL with `VITE_API_URL`
+> (default `http://localhost:5000/api`). See [Backend integration](#-backend-integration).
 
 ---
 
@@ -43,13 +43,18 @@ pick exact seats from a live seat map, and pay online.
 | Icons          | react-icons                     |
 | State          | React Context API               |
 | Styling        | Hand-written CSS design system  |
-| Persistence    | `localStorage` (mock backend)   |
+| Data           | REST API backend (JWT auth)     |
 
 ---
 
 ## 🚀 Getting Started
 
+> Start the **backend** first (default `http://localhost:5000`), then:
+
 ```bash
+# (optional) point the app at a different API
+cp .env.example .env   # edit VITE_API_URL if your backend isn't on :5000
+
 # install dependencies
 npm install
 
@@ -63,16 +68,10 @@ npm run build
 npm run preview
 ```
 
-### Demo accounts
-Two seeded **driver** accounts are available (or create your own):
-
-| Email             | Password   |
-| ----------------- | ---------- |
-| `ahmed@driver.com`| `password` |
-| `sara@driver.com` | `password` |
-
-Sign up as a **passenger** to test the booking flow. To reset all demo data,
-clear the site's `localStorage`.
+### Accounts
+Sign up as a **driver** to post vehicles, or as a **passenger** to book seats.
+Any seeded demo accounts depend on the backend's seed script — check the backend
+project for credentials.
 
 ---
 
@@ -99,15 +98,14 @@ src/
 │   ├── Booking.jsx  Payment.jsx  BookingConfirmation.jsx
 │   ├── MyBookings.jsx  DriverDashboard.jsx  PostVehicle.jsx
 │   ├── Profile.jsx  NotFound.jsx
-├── services/                # 👈 the API layer to replace
-│   ├── storage.js           # localStorage "database" + seeding
-│   ├── authService.js       # signup / login / profile
+├── services/                # API layer (talks to the backend)
+│   ├── apiClient.js         # fetch wrapper: base URL, JWT, error handling
+│   ├── authService.js       # signup / login / me / profile
 │   ├── vehicleService.js    # listing CRUD + search
 │   └── bookingService.js    # create / cancel / list bookings
 ├── data/
 │   ├── constants.js         # vehicle types, amenities, roles
-│   ├── cities.js            # selectable cities
-│   └── seedData.js          # demo users & vehicles
+│   └── cities.js            # selectable cities
 └── utils/
     └── format.js            # currency / date / time helpers
 ```
@@ -116,33 +114,12 @@ src/
 
 ## 🔌 Backend Integration
 
-All persistence lives behind the **`src/services/`** layer. Each function is
-already `async` and returns the shapes the UI expects, so swapping in your REST
-API is a localized change — the pages and components don't need to change.
+All network access lives behind the **`src/services/`** layer; pages and
+components never call `fetch` directly. `apiClient.js` centralizes the base URL,
+attaches the JWT (`Authorization: Bearer <token>`), and turns failures into
+thrown `Error(message)` values the pages already handle.
 
-For example, in `authService.js`:
-
-```js
-// Before (mock)
-export async function login({ email, password }) {
-  await delay()
-  /* ...localStorage lookup... */
-  return sanitize(user)
-}
-
-// After (real API)
-export async function login({ email, password }) {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  })
-  if (!res.ok) throw new Error((await res.json()).message)
-  return res.json() // { id, name, email, role, ... }
-}
-```
-
-Suggested endpoints to implement on the backend:
+Endpoints consumed (base URL = `VITE_API_URL`, default `http://localhost:5000/api`):
 
 | Service            | Endpoint(s)                                                        |
 | ------------------ | ------------------------------------------------------------------ |
@@ -150,13 +127,18 @@ Suggested endpoints to implement on the backend:
 | `vehicleService`   | `GET /vehicles` (query filters), `GET /vehicles/:id`, `POST /vehicles`, `PATCH /vehicles/:id`, `DELETE /vehicles/:id` |
 | `bookingService`   | `GET /bookings?userId=`, `GET /bookings?driverId=`, `POST /bookings`, `PATCH /bookings/:id/cancel` |
 
-Add `VITE_API_URL` to a `.env` file and replace the bodies in the four service
-files. Once done, `storage.js` and `data/seedData.js` can be deleted.
+Expected response shapes:
+- Auth: `{ token, user }` on signup/login, `{ user }` on `/auth/me`.
+- Vehicles/bookings: the entity or array, optionally wrapped in `{ data }` /
+  `{ vehicle(s) }` / `{ booking(s) }` (the client unwraps either form).
+- The client maps Mongo's `_id` to `id` automatically if present.
+
+The backend must enable **CORS** for the frontend origin and hash passwords.
 
 ---
 
 ## 📌 Notes
-- Passwords are stored in plain text **only** in the mock layer for demo purposes —
-  the real backend must hash them.
+- The auth token is stored in `localStorage` under `rentcar_token`; a `401`
+  response clears it automatically.
 - The seat map layout (rows / aisle) is driven by each vehicle type in
   `data/constants.js`.

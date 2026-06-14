@@ -94,7 +94,7 @@ export default function PostVehicle() {
           pricePerSeat: Number(form.pricePerSeat),
         })
       } else {
-        await createVehicle(user, form)
+        await createVehicle(form)
       }
       navigate('/driver/dashboard')
     } catch (err) {

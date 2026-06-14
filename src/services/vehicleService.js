@@ -1,77 +1,57 @@
-// Vehicle / listing service — mock implementation backed by localStorage.
-// See authService.js for notes on swapping in the real backend.
-import { db, delay, uid } from './storage'
+// Vehicle / listing service — talks to the RentCar backend.
+// Endpoints: GET /vehicles (+filters), GET /vehicles/:id, POST/PATCH/DELETE /vehicles/:id
+import { api, asEntity, asList } from './apiClient'
 
-// List all vehicles, optionally filtered. `filters` is an object:
-//   { fromCity, toCity, vehicleType, date }
+const query = (params = {}) => {
+  const sp = new URLSearchParams()
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== '') sp.set(k, v)
+  })
+  const s = sp.toString()
+  return s ? `?${s}` : ''
+}
+
+// Sort soonest-first as a safety net regardless of backend ordering.
+const byDeparture = (a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`)
+const byNewest = (a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''))
+
+// filters: { fromCity, toCity, vehicleType, date }
 export async function getVehicles(filters = {}) {
-  await delay(300)
-  let vehicles = db.getVehicles()
-
-  if (filters.fromCity) {
-    vehicles = vehicles.filter((v) => v.fromCity === filters.fromCity)
-  }
-  if (filters.toCity) {
-    vehicles = vehicles.filter((v) => v.toCity === filters.toCity)
-  }
-  if (filters.vehicleType) {
-    vehicles = vehicles.filter((v) => v.vehicleType === filters.vehicleType)
-  }
-  if (filters.date) {
-    vehicles = vehicles.filter((v) => v.date === filters.date)
-  }
-
-  // Soonest departures first.
-  return vehicles.sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))
+  const list = asList(await api(`/vehicles${query(filters)}`, { auth: false }), 'vehicles')
+  return list.sort(byDeparture)
 }
 
 export async function getVehicleById(id) {
-  await delay(250)
-  const vehicle = db.getVehicles().find((v) => v.id === id)
-  if (!vehicle) throw new Error('Vehicle not found.')
-  return vehicle
+  return asEntity(await api(`/vehicles/${id}`, { auth: false }), 'vehicle')
 }
 
 export async function getVehiclesByDriver(driverId) {
-  await delay(300)
-  return db
-    .getVehicles()
-    .filter((v) => v.driverId === driverId)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  const list = asList(await api(`/vehicles${query({ driverId })}`), 'vehicles')
+  return list.sort(byNewest)
 }
 
-export async function createVehicle(driver, data) {
-  await delay()
-  const vehicles = db.getVehicles()
-  const newVehicle = {
-    id: uid('veh'),
-    driverId: driver.id,
-    driverName: driver.name,
-    driverPhone: driver.phone || '',
-    bookedSeats: [],
-    rating: 0,
-    createdAt: new Date().toISOString(),
-    ...data,
-    totalSeats: Number(data.totalSeats),
-    pricePerSeat: Number(data.pricePerSeat),
-  }
-  vehicles.push(newVehicle)
-  db.saveVehicles(vehicles)
-  return newVehicle
+export async function createVehicle(data) {
+  return asEntity(
+    await api('/vehicles', {
+      method: 'POST',
+      body: {
+        ...data,
+        totalSeats: Number(data.totalSeats),
+        pricePerSeat: Number(data.pricePerSeat),
+      },
+    }),
+    'vehicle',
+  )
 }
 
 export async function updateVehicle(id, updates) {
-  await delay()
-  const vehicles = db.getVehicles()
-  const idx = vehicles.findIndex((v) => v.id === id)
-  if (idx === -1) throw new Error('Vehicle not found.')
-  vehicles[idx] = { ...vehicles[idx], ...updates }
-  db.saveVehicles(vehicles)
-  return vehicles[idx]
+  const body = { ...updates }
+  if (body.totalSeats != null) body.totalSeats = Number(body.totalSeats)
+  if (body.pricePerSeat != null) body.pricePerSeat = Number(body.pricePerSeat)
+  return asEntity(await api(`/vehicles/${id}`, { method: 'PATCH', body }), 'vehicle')
 }
 
 export async function deleteVehicle(id) {
-  await delay()
-  const vehicles = db.getVehicles().filter((v) => v.id !== id)
-  db.saveVehicles(vehicles)
+  await api(`/vehicles/${id}`, { method: 'DELETE' })
+  return true
 }
