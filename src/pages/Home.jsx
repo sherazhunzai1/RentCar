@@ -44,7 +44,7 @@ export default function Home() {
       <section className="hero">
         <div className="container hero-inner">
           <div className="hero-copy">
-            <span className="hero-eyebrow">Har shehar, har safar — every city, every journey</span>
+            <span className="hero-eyebrow">Apni seat, apni gaadi — your seat, your ride</span>
             <h1>
               Book your seat.<br />
               <span className="accent">Travel all of Pakistan.</span>

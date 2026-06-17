@@ -11,7 +11,7 @@ export default function Footer() {
             <Logo />
           </Link>
           <p>
-            Har shehar, har safar. Book your seat in cars, vans and buses across Pakistan —
+            Apni seat, apni gaadi. Book your seat in cars, vans and buses across Pakistan —
             connecting trusted drivers with passengers nationwide.
           </p>
           <div className="footer-social">
