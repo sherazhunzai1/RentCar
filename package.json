@@ -6,7 +6,9 @@
   "description": "gaadi.pk - Pakistan's online vehicle booking platform where drivers post routes and passengers book seats",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir .prerender && node prerender.js",
+    "build:spa": "vite build",
+    "prerender": "node prerender.js",
     "preview": "vite preview",
     "lint": "eslint ."
   },

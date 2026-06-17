@@ -167,20 +167,37 @@ The site ships with a full SEO setup:
 | Social preview image (1200×630 PNG) | `public/og-image.png` (source: `public/og-image.svg`) |
 | Structured data (Organization + WebSite JSON-LD) | static `index.html` |
 | `robots.txt`, `sitemap.xml`, PWA `site.webmanifest`, app icons | `public/` |
-| Per-route `<title>` / description / canonical / JSON-LD | `<Seo>` component (`src/components/Seo.jsx`) used on every page |
+| Per-route `<title>` / description / canonical / JSON-LD (runtime) | `<Seo>` component (`src/components/Seo.jsx`) used on every page |
+| **Prerendered static HTML** per public route | `npm run build` → `prerender.js` writes `dist/<route>/index.html` |
 | SPA deep-link fallback (so crawlers don't 404) | `vercel.json` and `public/_redirects` |
 
-### ⚠️ Important: social previews vs. Google
-- **Google** executes JavaScript, so the per-route `<Seo>` updates (e.g. *"Lahore
-  to Islamabad by Bus"*) are indexed per page.
-- **Social crawlers (WhatsApp, Facebook, Twitter) do NOT run JavaScript** — they
-  only read the **static tags in `index.html`**. So every shared link currently
-  shows the homepage card (`og-image.png`, the brand title/description). That is
-  correct and gives a rich preview everywhere.
-- To get a **unique social card per page** (e.g. a specific trip), you need
-  server-side rendering or prerendering — add `vite-plugin-prerender` /
-  `prerender.io`, or move to a framework like Next.js. The `<Seo>` API is already
-  shaped to feed that later.
+### Prerendering (static HTML for crawlers)
+`npm run build` prerenders the public routes — `/`, `/vehicles`, `/signup`,
+`/login` — to **fully static HTML**. Each file has its own `<title>`,
+description, canonical and Open Graph tags **plus** server-rendered page markup,
+so crawlers (including non-JS social bots) get real content and correct per-page
+meta without running any JavaScript.
+
+How it works (no extra dependencies — uses `react-dom/server`):
+1. `vite build` — client bundle + `dist/index.html` template
+2. `vite build --ssr src/entry-server.jsx` — temporary SSR bundle
+3. `node prerender.js` — renders each route and writes `dist/<route>/index.html`
+
+Use `npm run build:spa` for a plain SPA build without prerendering. The route
+list lives in `prerender.js` (keep it in sync with each page's `<Seo>` props).
+
+> On the host, the prerendered files take precedence and the SPA rewrite only
+> handles paths without a matching file (e.g. `/vehicles/:id`). `vite preview`
+> uses SPA-fallback mode so it always serves the root `index.html` locally — test
+> the nested files with a filesystem-first server if needed.
+
+### Per-trip social cards (the one remaining piece)
+A shared `/vehicles/:id` link still shows the **site-wide** card, because that
+trip's data is only known at request time (not at build). Google still indexes
+the page (it runs the JS), but to give each trip a **unique social card** you'd
+add a small serverless function (Vercel/Netlify) that fetches the vehicle and
+returns HTML with per-trip Open Graph tags. The `<Seo>` data is already shaped
+for this — ask and it can be wired up.
 
 ### Set your domain
 URLs are hardcoded to `https://gaadi.pk`. If you deploy somewhere else first,

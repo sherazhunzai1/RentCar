@@ -3,21 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Primary meta -->
-    <title>gaadi.pk — Book Your Seat, Travel All of Pakistan</title>
-    <meta
-      name="description"
-      content="gaadi.pk lets you book seats in cars, SUVs, vans and buses for intercity travel across Pakistan. Compare routes, pick your exact seat and pay online. Apni seat, apni gaadi."
-    />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="author" content="gaadi.pk" />
     <meta
       name="keywords"
       content="gaadi.pk, online vehicle booking Pakistan, book bus seat online, intercity travel Pakistan, car van bus booking, seat booking Pakistan, Lahore Islamabad Karachi travel, ride booking"
     />
-    <meta name="author" content="gaadi.pk" />
-    <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#2563eb" />
-    <link rel="canonical" href="https://gaadi.pk/" />
 
     <!-- Icons & PWA -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -25,15 +16,9 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+    <!-- Invariant Open Graph / Twitter (same for every page) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="gaadi.pk" />
-    <meta property="og:title" content="gaadi.pk — Book Your Seat, Travel All of Pakistan" />
-    <meta
-      property="og:description"
-      content="Book seats in cars, SUVs, vans and buses for intercity travel across Pakistan. Compare routes, pick your seat and pay online. Apni seat, apni gaadi."
-    />
-    <meta property="og:url" content="https://gaadi.pk/" />
     <meta property="og:image" content="https://gaadi.pk/og-image.png" />
     <meta property="og:image:secure_url" content="https://gaadi.pk/og-image.png" />
     <meta property="og:image:type" content="image/png" />
@@ -41,18 +26,34 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="gaadi.pk — Apni seat, apni gaadi. Book seats across Pakistan." />
     <meta property="og:locale" content="en_PK" />
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://gaadi.pk/og-image.png" />
+    <meta name="twitter:image:alt" content="gaadi.pk — Apni seat, apni gaadi" />
+
+    <!-- Per-route tags: defaults below are the homepage; prerender.js swaps the
+         block between these markers for each static route. -->
+    <!--seo:start-->
+    <title>gaadi.pk — Book Your Seat, Travel All of Pakistan</title>
+    <meta
+      name="description"
+      content="gaadi.pk lets you book seats in cars, SUVs, vans and buses for intercity travel across Pakistan. Compare routes, pick your exact seat and pay online. Apni seat, apni gaadi."
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://gaadi.pk/" />
+    <meta property="og:title" content="gaadi.pk — Book Your Seat, Travel All of Pakistan" />
+    <meta
+      property="og:description"
+      content="Book seats in cars, SUVs, vans and buses for intercity travel across Pakistan. Compare routes, pick your seat and pay online. Apni seat, apni gaadi."
+    />
+    <meta property="og:url" content="https://gaadi.pk/" />
     <meta name="twitter:title" content="gaadi.pk — Book Your Seat, Travel All of Pakistan" />
     <meta
       name="twitter:description"
       content="Book seats in cars, SUVs, vans and buses across Pakistan. Pick your seat and pay online. Apni seat, apni gaadi."
     />
-    <meta name="twitter:image" content="https://gaadi.pk/og-image.png" />
-    <meta name="twitter:image:alt" content="gaadi.pk — Apni seat, apni gaadi" />
+    <!--seo:end-->
 
-    <!-- Structured data: Organization + WebSite (helps Google understand the brand) -->
+    <!-- Structured data: Organization + WebSite -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -89,7 +90,7 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
