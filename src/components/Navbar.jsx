@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { FaCarSide, FaBars, FaTimes, FaUserCircle } from 'react-icons/fa'
+import { FaBars, FaTimes, FaUserCircle } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
+import Logo from './Logo'
 
 export default function Navbar() {
   const { isAuthenticated, isDriver, user, logout } = useAuth()
@@ -20,10 +21,7 @@ export default function Navbar() {
     <header className="navbar">
       <div className="container navbar-inner">
         <Link to="/" className="brand" onClick={close}>
-          <FaCarSide className="brand-icon" />
-          <span>
-            Rent<strong>Car</strong>
-          </span>
+          <Logo />
         </Link>
 
         <button

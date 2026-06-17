@@ -1,4 +1,4 @@
-// Vehicle / listing service — talks to the RentCar backend.
+// Vehicle / listing service — talks to the gaadi.pk backend.
 // Endpoints: GET /vehicles (+filters), GET /vehicles/:id, POST/PATCH/DELETE /vehicles/:id
 import { api, asEntity, asList } from './apiClient'
 

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { FaCarSide, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa'
+import Logo from './Logo'
 
 export default function Footer() {
   return (
@@ -7,14 +8,11 @@ export default function Footer() {
       <div className="container footer-inner">
         <div className="footer-brand">
           <Link to="/" className="brand brand-light">
-            <FaCarSide className="brand-icon" />
-            <span>
-              Rent<strong>Car</strong>
-            </span>
+            <Logo />
           </Link>
           <p>
-            Book your seat and travel smart. Connecting trusted drivers with passengers across
-            the country.
+            Har shehar, har safar. Book your seat in cars, vans and buses across Pakistan —
+            connecting trusted drivers with passengers nationwide.
           </p>
           <div className="footer-social">
             <a href="#" aria-label="Facebook"><FaFacebookF /></a>
@@ -51,8 +49,8 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <div className="container">
-          <p>© {new Date().getFullYear()} RentCar. All rights reserved.</p>
-          <p>Built with React + Vite.</p>
+          <p>© {new Date().getFullYear()} gaadi.pk. All rights reserved.</p>
+          <p>Made in Pakistan 🇵🇰</p>
         </div>
       </div>
     </footer>

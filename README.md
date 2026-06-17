@@ -1,4 +1,4 @@
-# 🚗 RentCar — Online Vehicle Booking Platform
+# 🚗 gaadi.pk — Online Vehicle Booking Platform
 
 A complete **Vite + React** frontend for a rent-a-car / seat-booking application.
 Drivers sign up, create a profile, post their vehicle (Car, SUV, Van or Bus) on a
@@ -157,7 +157,7 @@ Methods that settle immediately (card / cash) return a confirmed booking with no
 ---
 
 ## 📌 Notes
-- The auth token is stored in `localStorage` under `rentcar_token`; a `401`
+- The auth token is stored in `localStorage` under `gaadi_token`; a `401`
   response clears it automatically.
 - The seat map layout (rows / aisle) is driven by each vehicle type in
   `data/constants.js`.

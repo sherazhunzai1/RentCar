@@ -1,4 +1,4 @@
-# Backend Build Prompt — RentCar (Online Vehicle Seat-Booking Platform)
+# Backend Build Prompt — gaadi.pk (Online Vehicle Seat-Booking Platform)
 
 > Copy everything below the line and give it to your AI. A React frontend already
 > exists and expects the **exact** endpoints and JSON field names defined here, so
@@ -9,7 +9,7 @@
 ---
 
 You are a senior backend engineer. Build a complete, production-ready **REST API**
-for **"RentCar"**, an online vehicle seat-booking platform. A React frontend
+for **"gaadi.pk"**, an online vehicle seat-booking platform. A React frontend
 already exists and consumes the endpoints and JSON shapes defined in this document
 — implement them **exactly** (same paths, same field names, same value formats) so
 the frontend works without modification.
@@ -23,7 +23,7 @@ the frontend works without modification.
 - Provide a `package.json`, `.env.example`, and a README with run instructions
 
 ## 2. Product overview
-RentCar connects **drivers** who post vehicles on intercity routes with
+gaadi.pk connects **drivers** who post vehicles on intercity routes with
 **passengers** who book individual seats and pay online.
 
 There are two user roles:

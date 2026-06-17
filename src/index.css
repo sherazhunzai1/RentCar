@@ -1,5 +1,5 @@
 /* ============================================================
-   RentCar — Global stylesheet & design system
+   gaadi.pk — Global stylesheet & design system
    ============================================================ */
 
 /* ---- Design tokens ---- */
@@ -10,6 +10,8 @@
   --primary-light: #dbeafe;
   --primary-50: #eff6ff;
   --accent: #f97316;
+  --pk-green: #15803d;
+  --pk-green-bright: #22c55e;
 
   --ink: #0f172a;
   --ink-2: #334155;
@@ -389,18 +391,22 @@ button {
 .brand:hover {
   text-decoration: none;
 }
-.brand strong {
-  color: var(--primary);
+.brand-word {
+  letter-spacing: -0.02em;
+}
+.brand-tld {
+  color: var(--pk-green);
 }
 .brand-icon {
-  color: var(--primary);
-  font-size: 1.5rem;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
 }
 .brand-light {
   color: #fff;
 }
-.brand-light strong {
-  color: #93c5fd;
+.brand-light .brand-tld {
+  color: #4ade80;
 }
 .nav-links {
   display: flex;

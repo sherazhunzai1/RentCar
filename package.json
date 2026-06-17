@@ -1,9 +1,9 @@
 {
-  "name": "rentcar",
+  "name": "gaadi-pk",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "RentCar - Online vehicle booking platform where drivers post routes and passengers book seats",
+  "description": "gaadi.pk - Pakistan's online vehicle booking platform where drivers post routes and passengers book seats",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

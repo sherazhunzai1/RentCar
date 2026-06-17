@@ -1,11 +1,11 @@
-// Central HTTP client for the RentCar backend.
+// Central HTTP client for the gaadi.pk backend.
 //
 // Base URL comes from VITE_API_URL (set in .env) and falls back to the local
 // backend. Every request attaches the stored JWT as a Bearer token and unwraps
 // the JSON response, throwing an Error(message) on failure so the existing
 // try/catch blocks in the pages keep working unchanged.
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
-const TOKEN_KEY = 'rentcar_token'
+const TOKEN_KEY = 'gaadi_token'
 
 export const tokenStore = {
   get: () => localStorage.getItem(TOKEN_KEY),

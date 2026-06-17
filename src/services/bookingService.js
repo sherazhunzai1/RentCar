@@ -1,4 +1,4 @@
-// Booking service — talks to the RentCar backend.
+// Booking service — talks to the gaadi.pk backend.
 // Endpoints: GET /bookings (?userId/?driverId), GET /bookings/:id,
 //            POST /bookings, PATCH /bookings/:id/cancel
 import { api, asEntity, asList } from './apiClient'

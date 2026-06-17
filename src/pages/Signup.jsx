@@ -54,7 +54,7 @@ export default function Signup() {
       <div className="auth-card auth-card-wide">
         <div className="auth-head">
           <h1>Create your account</h1>
-          <p>Join RentCar to start booking or posting vehicles.</p>
+          <p>Join gaadi.pk to start booking or posting vehicles.</p>
         </div>
 
         {/* Role selector */}

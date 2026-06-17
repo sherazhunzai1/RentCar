@@ -1,4 +1,4 @@
-// Auth service — talks to the RentCar backend.
+// Auth service — talks to the gaadi.pk backend.
 // Endpoints: POST /auth/signup, POST /auth/login, GET /auth/me, PATCH /users/:id
 import { api, asEntity, tokenStore } from './apiClient'
 

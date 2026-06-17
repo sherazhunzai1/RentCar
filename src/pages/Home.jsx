@@ -44,14 +44,14 @@ export default function Home() {
       <section className="hero">
         <div className="container hero-inner">
           <div className="hero-copy">
-            <span className="hero-eyebrow">Intercity travel made simple</span>
+            <span className="hero-eyebrow">Har shehar, har safar — every city, every journey</span>
             <h1>
               Book your seat.<br />
-              <span className="accent">Travel smart.</span>
+              <span className="accent">Travel all of Pakistan.</span>
             </h1>
             <p>
-              Find cars, SUVs, vans and buses heading your way. Compare routes, pick your seat,
-              and pay online — all in a few taps.
+              Find cars, SUVs, vans and buses heading your way — from Karachi to the north.
+              Compare routes, pick your seat, and pay online in a few taps.
             </p>
             <div className="hero-actions">
               <Link to="/vehicles" className="btn btn-primary btn-lg">
@@ -176,7 +176,7 @@ export default function Home() {
       <section className="section section-muted">
         <div className="container">
           <div className="section-head">
-            <h2>Why ride with RentCar</h2>
+            <h2>Why ride with gaadi.pk</h2>
           </div>
           <div className="feature-grid">
             <div className="feature">
