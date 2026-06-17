@@ -4,6 +4,7 @@ import { FaCarSide, FaSlidersH } from 'react-icons/fa'
 import SearchBar from '../components/SearchBar'
 import VehicleCard from '../components/VehicleCard'
 import EmptyState from '../components/EmptyState'
+import Seo from '../components/Seo'
 import { getVehicles } from '../services/vehicleService'
 
 const SORTS = {
@@ -66,8 +67,18 @@ export default function VehicleListings() {
 
   const hasFilters = Object.values(filters).some(Boolean)
 
+  const seoTitle =
+    filters.fromCity && filters.toCity
+      ? `${filters.fromCity} to ${filters.toCity} — Available Vehicles`
+      : 'Browse Vehicles & Book Seats Across Pakistan'
+
   return (
     <div className="listings">
+      <Seo
+        title={seoTitle}
+        description="Search available cars, SUVs, vans and buses by route and date. Compare prices, pick your seat and book online across Pakistan."
+        path="/vehicles"
+      />
       <div className="listings-hero">
         <div className="container">
           <h1>Find your ride</h1>

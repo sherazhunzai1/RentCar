@@ -12,6 +12,7 @@ import Stepper from '../components/Stepper'
 import { useBooking } from '../context/BookingContext'
 import { createBooking } from '../services/bookingService'
 import { formatCurrency } from '../utils/format'
+import Seo from '../components/Seo'
 
 const METHODS = [
   { id: 'jazzcash', label: 'JazzCash', icon: FaMobileAlt },
@@ -86,6 +87,7 @@ export default function Payment() {
 
   return (
     <div className="container narrow checkout">
+      <Seo title="Payment" noindex />
       <Stepper active={1} />
       <h1 className="checkout-title">Payment</h1>
 

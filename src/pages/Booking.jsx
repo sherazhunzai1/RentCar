@@ -14,6 +14,7 @@ import { useAuth } from '../context/AuthContext'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
 import Stepper from '../components/Stepper'
+import Seo from '../components/Seo'
 
 export default function Booking() {
   const { draft } = useBooking()
@@ -33,6 +34,7 @@ export default function Booking() {
 
   return (
     <div className="container narrow checkout">
+      <Seo title="Review Booking" noindex />
       <Stepper active={0} />
 
       <h1 className="checkout-title">Review your booking</h1>

@@ -13,6 +13,7 @@ import Stepper from '../components/Stepper'
 import { getBookingById } from '../services/bookingService'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
+import Seo from '../components/Seo'
 
 export default function BookingConfirmation() {
   const { id } = useParams()
@@ -52,6 +53,7 @@ export default function BookingConfirmation() {
 
   return (
     <div className="container narrow checkout">
+      <Seo title="Booking Confirmed" noindex />
       <Stepper active={2} />
 
       <div className="confirm-hero">

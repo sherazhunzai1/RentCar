@@ -1,0 +1,12 @@
+# gaadi.pk — robots
+User-agent: *
+Allow: /
+
+# Keep private / transactional pages out of search results
+Disallow: /booking
+Disallow: /payment
+Disallow: /my-bookings
+Disallow: /driver/
+Disallow: /profile
+
+Sitemap: https://gaadi.pk/sitemap.xml

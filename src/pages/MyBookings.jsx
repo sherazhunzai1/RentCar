@@ -13,6 +13,7 @@ import { getBookingsByUser, cancelBooking } from '../services/bookingService'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
+import Seo from '../components/Seo'
 
 export default function MyBookings() {
   const { user } = useAuth()
@@ -47,6 +48,7 @@ export default function MyBookings() {
 
   return (
     <div className="container section dashboard">
+      <Seo title="My Bookings" path="/my-bookings" noindex />
       <div className="dashboard-head">
         <div>
           <h1>My Bookings</h1>

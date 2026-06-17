@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FaUser, FaEnvelope, FaLock, FaPhone, FaIdCard, FaCar, FaUserCheck } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
 import { USER_ROLES } from '../data/constants'
+import Seo from '../components/Seo'
 
 export default function Signup() {
   const { signup } = useAuth()
@@ -51,6 +52,11 @@ export default function Signup() {
 
   return (
     <div className="auth-page">
+      <Seo
+        title="Sign Up — Become a Driver or Book Seats"
+        description="Create your gaadi.pk account to book seats as a passenger or post your vehicle on intercity routes across Pakistan."
+        path="/signup"
+      />
       <div className="auth-card auth-card-wide">
         <div className="auth-head">
           <h1>Create your account</h1>

@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa'
 import SeatMap from '../components/SeatMap'
 import StarRating from '../components/StarRating'
+import Seo, { SITE } from '../components/Seo'
 import { getVehicleById } from '../services/vehicleService'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
@@ -73,8 +74,32 @@ export default function VehicleDetails() {
   const available = vehicle.totalSeats - vehicle.bookedSeats.length
   const total = selected.length * vehicle.pricePerSeat
 
+  const seoTitle = `${vehicle.fromCity} to ${vehicle.toCity} by ${type.label}`
+  const seoDescription = `Book a seat on ${vehicle.vehicleName} (${type.label}) from ${vehicle.fromCity} to ${vehicle.toCity} on ${formatDate(vehicle.date)} at ${formatTime(vehicle.time)}. ${available} seat${available === 1 ? '' : 's'} available from ${formatCurrency(vehicle.pricePerSeat)} per seat on gaadi.pk.`
+  const seoJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Vehicles', item: `${SITE.url}/vehicles` },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: `${vehicle.fromCity} to ${vehicle.toCity}`,
+        item: `${SITE.url}/vehicles/${vehicle.id}`,
+      },
+    ],
+  }
+
   return (
     <div className="details">
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+        path={`/vehicles/${vehicle.id}`}
+        type="article"
+        jsonLd={seoJsonLd}
+      />
       <div className="container">
         <Link to="/vehicles" className="back-link">
           <FaArrowLeft /> Back to listings

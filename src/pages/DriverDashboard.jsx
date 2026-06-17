@@ -18,6 +18,7 @@ import { getBookingsByDriver } from '../services/bookingService'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
+import Seo from '../components/Seo'
 
 export default function DriverDashboard() {
   const { user } = useAuth()
@@ -66,6 +67,7 @@ export default function DriverDashboard() {
 
   return (
     <div className="container section dashboard">
+      <Seo title="Driver Dashboard" path="/driver/dashboard" noindex />
       <div className="dashboard-head">
         <div>
           <h1>Welcome, {user.name.split(' ')[0]} 👋</h1>

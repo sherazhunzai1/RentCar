@@ -1,0 +1,16 @@
+{
+  "name": "gaadi.pk — Book Your Seat, Travel All of Pakistan",
+  "short_name": "gaadi.pk",
+  "description": "Book seats in cars, vans and buses for intercity travel across Pakistan. Apni seat, apni gaadi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "lang": "en-PK",
+  "categories": ["travel", "transportation", "booking"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

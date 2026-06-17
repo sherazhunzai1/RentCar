@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
 import { FaCarSide } from 'react-icons/fa'
+import Seo from '../components/Seo'
 
 export default function NotFound() {
   return (
     <div className="container narrow notfound">
+      <Seo title="Page Not Found" noindex />
       <FaCarSide className="notfound-icon" />
       <h1>404</h1>
       <h2>Looks like you took a wrong turn</h2>

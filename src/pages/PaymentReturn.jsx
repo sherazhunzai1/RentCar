@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navigate, useSearchParams, Link } from 'react-router-dom'
 import { FaTimesCircle, FaRedo, FaListUl } from 'react-icons/fa'
 import { getBookingById } from '../services/bookingService'
+import Seo from '../components/Seo'
 
 // Landing page the payment gateway (JazzCash) redirects the browser back to:
 //   CLIENT_ORIGIN + CLIENT_PAYMENT_RETURN_PATH?bookingId=…&status=success|failed&ref=…
@@ -42,6 +43,7 @@ export default function PaymentReturn() {
 
   return (
     <div className="container narrow checkout">
+      <Seo title="Payment Status" noindex />
       <div className="confirm-hero">
         <div className="confirm-check confirm-fail">
           <FaTimesCircle />

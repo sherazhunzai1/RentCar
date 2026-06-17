@@ -6,6 +6,7 @@ import { VEHICLE_TYPES, AMENITIES, getVehicleType } from '../data/constants'
 import { createVehicle, updateVehicle, getVehicleById } from '../services/vehicleService'
 import { todayISO } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
+import Seo from '../components/Seo'
 
 const emptyForm = {
   vehicleType: 'car',
@@ -115,6 +116,7 @@ export default function PostVehicle() {
 
   return (
     <div className="container narrow section">
+      <Seo title={isEdit ? 'Edit Vehicle' : 'Post a Vehicle'} noindex />
       <Link to="/driver/dashboard" className="back-link">
         <FaArrowLeft /> Back to dashboard
       </Link>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FaUserCircle, FaCar, FaUserCheck } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
 import { formatDate } from '../utils/format'
+import Seo from '../components/Seo'
 
 export default function Profile() {
   const { user, updateProfile, isDriver } = useAuth()
@@ -36,6 +37,7 @@ export default function Profile() {
 
   return (
     <div className="container narrow section">
+      <Seo title="My Profile" path="/profile" noindex />
       <div className="page-title-block">
         <h1>My Profile</h1>
         <p>Manage your account details.</p>

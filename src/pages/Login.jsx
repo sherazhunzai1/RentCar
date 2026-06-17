@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaEnvelope, FaLock, FaSignInAlt } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
+import Seo from '../components/Seo'
 
 export default function Login() {
   const { login } = useAuth()
@@ -35,6 +36,7 @@ export default function Login() {
 
   return (
     <div className="auth-page">
+      <Seo title="Login" path="/login" noindex />
       <div className="auth-card">
         <div className="auth-head">
           <h1>Welcome back</h1>

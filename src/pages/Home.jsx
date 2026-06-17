@@ -16,6 +16,7 @@ import VehicleCard from '../components/VehicleCard'
 import { VEHICLE_TYPES } from '../data/constants'
 import { getVehicles } from '../services/vehicleService'
 import { useAuth } from '../context/AuthContext'
+import Seo from '../components/Seo'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -40,6 +41,7 @@ export default function Home() {
 
   return (
     <div className="home">
+      <Seo path="/" />
       {/* Hero */}
       <section className="hero">
         <div className="container hero-inner">

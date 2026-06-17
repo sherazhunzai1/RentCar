@@ -156,6 +156,53 @@ Methods that settle immediately (card / cash) return a confirmed booking with no
 
 ---
 
+## 🔎 SEO & Social Sharing
+
+The site ships with a full SEO setup:
+
+| Area | Where |
+| ---- | ----- |
+| Title, description, keywords, canonical, theme-color | static `index.html` |
+| **Open Graph** (Facebook / WhatsApp / LinkedIn) + **Twitter Card** | static `index.html` |
+| Social preview image (1200×630 PNG) | `public/og-image.png` (source: `public/og-image.svg`) |
+| Structured data (Organization + WebSite JSON-LD) | static `index.html` |
+| `robots.txt`, `sitemap.xml`, PWA `site.webmanifest`, app icons | `public/` |
+| Per-route `<title>` / description / canonical / JSON-LD | `<Seo>` component (`src/components/Seo.jsx`) used on every page |
+| SPA deep-link fallback (so crawlers don't 404) | `vercel.json` and `public/_redirects` |
+
+### ⚠️ Important: social previews vs. Google
+- **Google** executes JavaScript, so the per-route `<Seo>` updates (e.g. *"Lahore
+  to Islamabad by Bus"*) are indexed per page.
+- **Social crawlers (WhatsApp, Facebook, Twitter) do NOT run JavaScript** — they
+  only read the **static tags in `index.html`**. So every shared link currently
+  shows the homepage card (`og-image.png`, the brand title/description). That is
+  correct and gives a rich preview everywhere.
+- To get a **unique social card per page** (e.g. a specific trip), you need
+  server-side rendering or prerendering — add `vite-plugin-prerender` /
+  `prerender.io`, or move to a framework like Next.js. The `<Seo>` API is already
+  shaped to feed that later.
+
+### Set your domain
+URLs are hardcoded to `https://gaadi.pk`. If you deploy somewhere else first,
+update the domain in: `index.html` (canonical + og/twitter + JSON-LD),
+`src/components/Seo.jsx` (`SITE.url`), `public/sitemap.xml`, and `public/robots.txt`.
+
+### Regenerate the social image / icons
+Edit `public/og-image.svg`, then rasterize (one-off, no saved dependency):
+```bash
+npm i --no-save sharp
+node -e "require('sharp')('public/og-image.svg',{density:192}).resize(1200,630).png().toFile('public/og-image.png')"
+```
+
+### After going live
+1. Add the site to **Google Search Console** and submit `https://gaadi.pk/sitemap.xml`.
+2. Test rich data with the **Google Rich Results Test**.
+3. Validate cards with the **Facebook Sharing Debugger** and **Twitter Card
+   Validator** (Facebook also lets you re-scrape after changes). WhatsApp pulls
+   the same Open Graph tags — just paste a link in a chat to preview.
+
+---
+
 ## 📌 Notes
 - The auth token is stored in `localStorage` under `gaadi_token`; a `401`
   response clears it automatically.
