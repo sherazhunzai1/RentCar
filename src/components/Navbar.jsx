@@ -1,51 +1,37 @@
-import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { FaBars, FaTimes, FaUserCircle } from 'react-icons/fa'
+import { FaUserCircle } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 
+// Top header. On desktop it shows the full horizontal nav; on mobile the links
+// are hidden (CSS) and the app-style <BottomNav> takes over, leaving a slim
+// brand-only header bar.
 export default function Navbar() {
   const { isAuthenticated, isDriver, user, logout } = useAuth()
-  const [open, setOpen] = useState(false)
   const navigate = useNavigate()
-
-  const close = () => setOpen(false)
 
   const handleLogout = async () => {
     await logout()
-    close()
     navigate('/')
   }
 
   return (
     <header className="navbar">
       <div className="container navbar-inner">
-        <Link to="/" className="brand" onClick={close}>
+        <Link to="/" className="brand">
           <Logo />
         </Link>
 
-        <button
-          className="nav-toggle"
-          onClick={() => setOpen((o) => !o)}
-          aria-label="Toggle menu"
-        >
-          {open ? <FaTimes /> : <FaBars />}
-        </button>
-
-        <nav className={`nav-links ${open ? 'open' : ''}`}>
-          <NavLink to="/" end onClick={close}>
+        <nav className="nav-links">
+          <NavLink to="/" end>
             Home
           </NavLink>
-          <NavLink to="/vehicles" onClick={close}>
-            Browse Vehicles
-          </NavLink>
+          <NavLink to="/vehicles">Browse Vehicles</NavLink>
 
           {!isAuthenticated && (
             <>
-              <NavLink to="/login" onClick={close}>
-                Login
-              </NavLink>
-              <Link to="/signup" className="btn btn-primary nav-cta" onClick={close}>
+              <NavLink to="/login">Login</NavLink>
+              <Link to="/signup" className="btn btn-primary nav-cta">
                 Sign Up
               </Link>
             </>
@@ -53,24 +39,18 @@ export default function Navbar() {
 
           {isAuthenticated && isDriver && (
             <>
-              <NavLink to="/driver/dashboard" onClick={close}>
-                Dashboard
-              </NavLink>
-              <Link to="/driver/post" className="btn btn-primary nav-cta" onClick={close}>
+              <NavLink to="/driver/dashboard">Dashboard</NavLink>
+              <Link to="/driver/post" className="btn btn-primary nav-cta">
                 + Post Vehicle
               </Link>
             </>
           )}
 
-          {isAuthenticated && !isDriver && (
-            <NavLink to="/my-bookings" onClick={close}>
-              My Bookings
-            </NavLink>
-          )}
+          {isAuthenticated && !isDriver && <NavLink to="/my-bookings">My Bookings</NavLink>}
 
           {isAuthenticated && (
             <div className="nav-user">
-              <Link to="/profile" className="nav-user-chip" onClick={close}>
+              <Link to="/profile" className="nav-user-chip">
                 <FaUserCircle />
                 <span>{user.name.split(' ')[0]}</span>
               </Link>

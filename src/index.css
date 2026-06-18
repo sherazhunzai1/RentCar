@@ -1900,6 +1900,11 @@ button {
   color: var(--muted);
   font-size: 0.85rem;
 }
+.profile-logout {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
 
 /* ============================================================
    Post vehicle form
@@ -2024,6 +2029,53 @@ button {
 }
 
 /* ============================================================
+   Mobile bottom navigation (app-style tab bar)
+   ============================================================ */
+.bottom-nav {
+  display: none; /* shown only on mobile via media query */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -2px 16px rgba(15, 23, 42, 0.07);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 9px 4px 7px;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bottom-nav-item:hover {
+  text-decoration: none;
+  color: var(--ink-2);
+}
+.bottom-nav-icon {
+  font-size: 1.32rem;
+  transition: transform 0.15s;
+}
+.bottom-nav-item.active {
+  color: var(--primary);
+}
+.bottom-nav-item.active .bottom-nav-icon {
+  transform: translateY(-1px) scale(1.06);
+}
+
+/* ============================================================
    Responsive
    ============================================================ */
 @media (max-width: 980px) {
@@ -2072,43 +2124,22 @@ button {
 }
 
 @media (max-width: 720px) {
-  .nav-toggle {
-    display: block;
-  }
+  /* Replace the hamburger menu with the bottom tab bar */
+  .nav-toggle,
   .nav-links {
-    position: absolute;
-    top: 68px;
-    left: 0;
-    right: 0;
-    background: #fff;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding: 8px 20px 20px;
-    border-bottom: 1px solid var(--line);
-    box-shadow: var(--shadow);
     display: none;
   }
-  .nav-links.open {
+  .navbar-inner {
+    height: 56px;
+  }
+  .bottom-nav {
     display: flex;
   }
-  .nav-links > a {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line);
+  .app-main {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   }
-  .nav-cta {
-    margin-top: 10px;
-    justify-content: center;
-  }
-  .nav-user {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    padding: 12px 0 0;
-    border-left: none;
-  }
-  .nav-user .btn {
-    width: 100%;
+  .footer {
+    display: none;
   }
   .hero-copy h1 {
     font-size: 2.4rem;

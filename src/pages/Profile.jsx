@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { FaUserCircle, FaCar, FaUserCheck } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import { FaUserCircle, FaCar, FaUserCheck, FaSignOutAlt } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
 import { formatDate } from '../utils/format'
 import Seo from '../components/Seo'
 
 export default function Profile() {
-  const { user, updateProfile, isDriver } = useAuth()
+  const { user, updateProfile, isDriver, logout } = useAuth()
+  const navigate = useNavigate()
   const [form, setForm] = useState({
     name: user.name,
     phone: user.phone || '',
@@ -33,6 +35,11 @@ export default function Profile() {
     } finally {
       setSaving(false)
     }
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/')
   }
 
   return (
@@ -94,6 +101,12 @@ export default function Profile() {
             {saving ? 'Saving…' : 'Save changes'}
           </button>
         </form>
+
+        <div className="profile-logout">
+          <button className="btn btn-danger-ghost btn-block" onClick={handleLogout}>
+            <FaSignOutAlt /> Log Out
+          </button>
+        </div>
       </div>
     </div>
   )
