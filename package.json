@@ -9,6 +9,7 @@
     "build": "vite build && vite build --ssr src/entry-server.jsx --outDir .prerender && node prerender.js",
     "build:spa": "vite build",
     "prerender": "node prerender.js",
+    "og:serve": "node server/og-server.mjs",
     "preview": "vite preview",
     "lint": "eslint ."
   },

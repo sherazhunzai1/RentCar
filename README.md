@@ -191,13 +191,11 @@ list lives in `prerender.js` (keep it in sync with each page's `<Seo>` props).
 > uses SPA-fallback mode so it always serves the root `index.html` locally — test
 > the nested files with a filesystem-first server if needed.
 
-### Per-trip social cards (the one remaining piece)
-A shared `/vehicles/:id` link still shows the **site-wide** card, because that
-trip's data is only known at request time (not at build). Google still indexes
-the page (it runs the JS), but to give each trip a **unique social card** you'd
-add a small serverless function (Vercel/Netlify) that fetches the vehicle and
-returns HTML with per-trip Open Graph tags. The `<Seo>` data is already shaped
-for this — ask and it can be wired up.
+### Per-trip social cards (implemented for nginx/VPS)
+Shared `/vehicles/:id` links get their **own** card (specific route, date, seats,
+price) via a tiny Node renderer (`server/og-server.mjs`). nginx routes **only
+social-media crawlers** for `/vehicles/:id` to it; real users keep getting the
+static SPA untouched. See **Deploying on a Linux VPS** below.
 
 ### Set your domain
 URLs are hardcoded to `https://gaadi.pk`. If you deploy somewhere else first,
@@ -217,6 +215,53 @@ node -e "require('sharp')('public/og-image.svg',{density:192}).resize(1200,630).
 3. Validate cards with the **Facebook Sharing Debugger** and **Twitter Card
    Validator** (Facebook also lets you re-scrape after changes). WhatsApp pulls
    the same Open Graph tags — just paste a link in a chat to preview.
+
+---
+
+## 🚀 Deploying on a Linux VPS (nginx)
+
+Files: `deploy/nginx-gaadi.pk.conf`, `deploy/og-renderer.service`,
+`server/og-server.mjs`.
+
+**1. Build the frontend** (point the browser at your API via same-origin `/api`):
+```bash
+echo "VITE_API_URL=/api" > .env
+npm ci && npm run build      # outputs dist/ (with prerendered routes)
+```
+
+**2. Put the project on the server**, e.g. `/var/www/gaadi.pk` — keep both
+`dist/` (served by nginx) and `server/` (the OG renderer) there.
+
+**3. nginx** — copy `deploy/nginx-gaadi.pk.conf` into `sites-available`
+(symlink to `sites-enabled`) or `conf.d/`, then:
+```bash
+sudo certbot --nginx -d gaadi.pk -d www.gaadi.pk   # TLS
+sudo nginx -t && sudo systemctl reload nginx
+```
+It serves static files + prerendered routes, falls back to the SPA, proxies
+`/api/` to your backend, and routes only crawler User-Agents for `/vehicles/:id`
+to the OG renderer.
+
+**4. Per-trip OG renderer** — run `server/og-server.mjs` as a service:
+```bash
+sudo cp deploy/og-renderer.service /etc/systemd/system/gaadi-og.service
+# edit WorkingDirectory / API_URL / SITE_URL if needed
+sudo systemctl daemon-reload && sudo systemctl enable --now gaadi-og
+```
+Config (env): `OG_PORT` (8082), `OG_HOST` (127.0.0.1), `API_URL`
+(`http://127.0.0.1:5000/api`), `SITE_URL` (`https://gaadi.pk`). It has **no npm
+dependencies** (needs Node 18+).
+
+**5. Verify the split routing:**
+```bash
+# A crawler sees the per-trip card:
+curl -s -A "facebookexternalhit/1.1" https://gaadi.pk/vehicles/<id> | grep og:title
+# A normal user gets the SPA shell:
+curl -s -A "Mozilla/5.0" https://gaadi.pk/vehicles/<id> | grep '<div id="root">'
+```
+
+> `vercel.json` and `public/_redirects` are for those hosts and are unused on a
+> VPS — nginx is authoritative here.
 
 ---
 
