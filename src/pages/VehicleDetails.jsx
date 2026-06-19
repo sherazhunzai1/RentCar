@@ -287,7 +287,7 @@ export default function VehicleDetails() {
 
               {hasSelection && (
                 <div className="summary-row">
-                  <span>Service fee (5%)</span>
+                  <span>Service fee (3%)</span>
                   <span>{formatCurrency(pricing.serviceFee)}</span>
                 </div>
               )}

@@ -122,7 +122,7 @@ Seat numbers are integers from `1` to `totalSeats`.
 | `seats`         | number[]  | Booked seat numbers                                         |
 | `pricePerSeat`  | number    | Snapshot at booking time                                    |
 | `subtotal`      | number    | `seats.length * pricePerSeat`                               |
-| `serviceFee`    | number    | 5% of subtotal, rounded                                     |
+| `serviceFee`    | number    | 3% of subtotal, rounded                                     |
 | `totalAmount`   | number    | `subtotal + serviceFee`                                     |
 | `status`        | string    | `"confirmed"` or `"cancelled"`; default `"confirmed"`       |
 | `paymentMethod` | string    | `"card" | "wallet" | "cash"`                                |
@@ -171,7 +171,7 @@ The `GET /vehicles?driverId=` form powers the driver dashboard.
    with a message naming the clashing seats) — this prevents double-booking under
    concurrency.
 3. Add the seats to `vehicle.bookedSeats`.
-4. Compute `subtotal`, `serviceFee` (5%), `totalAmount`.
+4. Compute `subtotal`, `serviceFee` (3%), `totalAmount`.
 5. Generate `bookingRef`, snapshot the denormalized trip fields, set
    `status: "confirmed"` and `paidAt`.
 6. Return the created `Booking`.

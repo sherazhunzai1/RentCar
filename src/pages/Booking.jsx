@@ -128,7 +128,7 @@ export default function Booking() {
               <span>{formatCurrency(pricing.subtotal)}</span>
             </div>
             <div className="summary-row">
-              <span>Service fee (5%)</span>
+              <span>Service fee (3%)</span>
               <span>{formatCurrency(pricing.serviceFee)}</span>
             </div>
             <div className="summary-total">
