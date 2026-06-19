@@ -1,9 +1,8 @@
 import { FaEnvelope, FaPhoneAlt, FaWhatsapp, FaMapMarkerAlt } from 'react-icons/fa'
 import Seo from '../components/Seo'
 
-// TODO: replace with your real number before launch (display + tel/WhatsApp digits).
-const PHONE_DISPLAY = '+92 300 0000000'
-const PHONE_DIGITS = '923000000000' // international format, no "+", for tel:/wa.me
+const PHONE_DISPLAY = '+92 333 5547617'
+const PHONE_DIGITS = '923335547617' // international format, no "+", for tel:/wa.me
 const EMAIL = 'contact@gaadi.pk'
 
 export default function Contact() {
