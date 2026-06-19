@@ -111,7 +111,10 @@ button {
   max-width: 920px;
 }
 .section {
-  padding: 72px 0;
+  /* padding-block (not the shorthand) so a combined `.container.section`
+     keeps the container's left/right padding — otherwise content hits the
+     screen edges on mobile. */
+  padding-block: 72px;
 }
 .section-muted {
   background: var(--bg-2);
@@ -2767,7 +2770,7 @@ button {
     font-size: 2.4rem;
   }
   .section {
-    padding: 52px 0;
+    padding-block: 52px;
   }
   .section-head h2 {
     font-size: 1.6rem;
