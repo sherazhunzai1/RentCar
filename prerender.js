@@ -52,6 +52,13 @@ const ROUTES = [
       'The terms that govern using gaadi.pk to book seats and vehicles to and from Gilgit-Baltistan, and to list vehicles as a driver.',
     index: true,
   },
+  {
+    path: '/privacy',
+    title: 'Privacy Policy',
+    description:
+      'How gaadi.pk collects, uses and protects your personal information when you book seats, list vehicles and message through the platform.',
+    index: true,
+  },
   { path: '/login', title: 'Login', description: DEFAULT_DESC, index: false },
 ]
 
