@@ -3037,11 +3037,14 @@ a.contact-card:hover {
   .bottom-nav {
     display: flex;
   }
-  .app-main {
-    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
-  }
   .footer {
-    display: none;
+    /* Footer is shown on mobile too; pad so its content clears the fixed
+       bottom tab bar. (The footer is the last element, so it provides the
+       bottom-nav clearance — no extra padding on .app-main needed.) */
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+  .footer-inner {
+    padding: 36px 20px 28px;
   }
   .toast-container {
     bottom: calc(74px + env(safe-area-inset-bottom, 0px));
