@@ -2252,12 +2252,18 @@ a.contact-card:hover {
 @media (max-width: 720px) {
   .founder-card {
     flex-direction: column;
-    text-align: center;
     align-items: center;
   }
   .founder-photo {
     width: 160px;
     height: 195px;
+  }
+  .founder-bio {
+    text-align: center;
+    width: 100%;
+  }
+  .founder-bio > p:last-child {
+    text-align: left;
   }
   .about-values {
     grid-template-columns: 1fr;
@@ -2267,7 +2273,15 @@ a.contact-card:hover {
   }
   .about-cta {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    text-align: left;
+  }
+  .about-cta-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .about-cta-actions .btn {
+    width: 100%;
   }
 }
 
