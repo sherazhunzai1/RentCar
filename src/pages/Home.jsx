@@ -10,10 +10,12 @@ import {
   FaTags,
   FaHeadset,
   FaArrowRight,
+  FaMountain,
 } from 'react-icons/fa'
 import SearchBar from '../components/SearchBar'
 import VehicleCard from '../components/VehicleCard'
 import { VEHICLE_TYPES } from '../data/constants'
+import { POPULAR_ROUTES, routeHref } from '../data/popularRoutes'
 import { getVehicles } from '../services/vehicleService'
 import { useAuth } from '../context/AuthContext'
 import Seo from '../components/Seo'
@@ -115,6 +117,37 @@ export default function Home() {
                 </Link>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular routes */}
+      <section className="section">
+        <div className="container">
+          <div className="section-head">
+            <h2>Popular routes to Gilgit-Baltistan</h2>
+            <p>Book seats or a whole vehicle on the most-travelled routes up north.</p>
+          </div>
+          <div className="route-card-grid">
+            {POPULAR_ROUTES.map((route) => (
+              <Link
+                key={`${route.from}-${route.to}`}
+                to={routeHref(route)}
+                className="route-card"
+                aria-label={`Vehicles from ${route.from} to ${route.to}`}
+              >
+                <div className="route-card-cities">
+                  <span className="route-card-from">{route.from}</span>
+                  <FaArrowRight className="route-card-arrow" />
+                  <span className="route-card-to">
+                    <FaMountain /> {route.to}
+                  </span>
+                </div>
+                <span className="route-card-go">
+                  Find seats <FaArrowRight />
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

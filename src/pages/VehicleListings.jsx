@@ -67,18 +67,22 @@ export default function VehicleListings() {
 
   const hasFilters = Object.values(filters).some(Boolean)
 
-  const seoTitle =
-    filters.fromCity && filters.toCity
-      ? `${filters.fromCity} to ${filters.toCity} — Available Vehicles`
-      : 'Vehicles to Gilgit-Baltistan — Hunza, Gilgit, Skardu, Ghizer'
+  const isRoute = Boolean(filters.fromCity && filters.toCity)
+  const seoTitle = isRoute
+    ? `${filters.fromCity} to ${filters.toCity} — Book Seats & Vehicles`
+    : 'Vehicles to Gilgit-Baltistan — Hunza, Gilgit, Skardu, Ghizer'
+  const seoDescription = isRoute
+    ? `Book a seat or a whole vehicle from ${filters.fromCity} to ${filters.toCity} on gaadi.pk. Compare cars, vans and buses, pick your seat and pay online.`
+    : 'Search seats and whole vehicles to Gilgit-Baltistan by route and date — Hunza, Gilgit, Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore.'
+  // Route pages get a self-referential canonical so they can rank individually;
+  // date/type filters still consolidate to the route URL.
+  const seoPath = isRoute
+    ? `/vehicles?fromCity=${encodeURIComponent(filters.fromCity)}&toCity=${encodeURIComponent(filters.toCity)}`
+    : '/vehicles'
 
   return (
     <div className="listings">
-      <Seo
-        title={seoTitle}
-        description="Search seats and whole vehicles to Gilgit-Baltistan by route and date — Hunza, Gilgit, Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore."
-        path="/vehicles"
-      />
+      <Seo title={seoTitle} description={seoDescription} path={seoPath} />
       <div className="listings-hero">
         <div className="container">
           <h1>Find your ride to the north</h1>

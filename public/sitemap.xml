@@ -20,4 +20,14 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
+  <!-- Popular routes (keep in sync with src/data/popularRoutes.js) -->
+  <url><loc>https://gaadi.pk/vehicles?fromCity=Islamabad&amp;toCity=Hunza</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gaadi.pk/vehicles?fromCity=Islamabad&amp;toCity=Skardu</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gaadi.pk/vehicles?fromCity=Islamabad&amp;toCity=Gilgit</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gaadi.pk/vehicles?fromCity=Rawalpindi&amp;toCity=Gilgit</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gaadi.pk/vehicles?fromCity=Rawalpindi&amp;toCity=Skardu</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gaadi.pk/vehicles?fromCity=Lahore&amp;toCity=Hunza</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gaadi.pk/vehicles?fromCity=Gilgit&amp;toCity=Hunza</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gaadi.pk/vehicles?fromCity=Gilgit&amp;toCity=Skardu</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
 </urlset>
