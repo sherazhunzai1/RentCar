@@ -15,16 +15,18 @@ pick exact seats from a live seat map, and pay online.
 
 ### For Drivers
 - Sign up & build a driver profile (license number, experience, phone)
-- Post a vehicle with **type** (Car / SUV / Van / Bus), name, registration, **route** (from → to city), date, time, seat count, price per seat and amenities
-- Driver **dashboard** with stats (listings, bookings, seats booked, revenue)
-- Edit / delete listings and view incoming bookings in a table
+- Post a vehicle with **type** (Car / SUV / Van / Bus), name, registration, **route** (cities from `GET /api/locations`), date, time and amenities
+- **Driver-chosen seat count**, capped per type (car ≤ 4; suv/van/bus ≤ 24)
+- **Flexible pricing**: base price per seat, an optional **front-seat price** (with a seat-number picker) and an optional **whole-vehicle** flat price
+- Driver **dashboard** with stats; edit / delete listings and view bookings
 
 ### For Passengers
 - Sign up & browse all available vehicles
 - Search & filter by departure city, destination, date and vehicle type; sort by price / rating / time
-- **Vehicle details** page with a live, interactive **seat map**
+- **Vehicle details** page with a live **seat map** — front seats are badged and priced separately, with a live subtotal
+- One-tap **"Book whole vehicle"** when the driver offers a flat price
 - Multi-step checkout: **Review → Payment → Confirmation**
-- Multiple (mock) payment methods: card, mobile wallet, cash on boarding
+- Payment methods: JazzCash (hosted redirect), card, wallet, cash on boarding
 - **My Bookings** page with ticket cards and seat cancellation
 
 ### Shared

@@ -4,6 +4,7 @@ import { FaCar, FaShuttleVan, FaBus, FaTruckPickup } from 'react-icons/fa'
 
 // Vehicle types a driver can post. `seatLayout` describes how the seat map
 // is rendered: `cols` seats per row and an optional `aisleAfter` index.
+// `maxSeats` mirrors the backend cap (car ≤ 4; suv/van/bus ≤ 24).
 export const VEHICLE_TYPES = [
   {
     id: 'car',
@@ -20,7 +21,7 @@ export const VEHICLE_TYPES = [
     icon: FaTruckPickup,
     description: 'Spacious rides for families & rough roads',
     defaultSeats: 6,
-    maxSeats: 7,
+    maxSeats: 24,
     seatLayout: { cols: 3, aisleAfter: 1 },
   },
   {
@@ -29,7 +30,7 @@ export const VEHICLE_TYPES = [
     icon: FaShuttleVan,
     description: 'Mini-vans & coasters for mid-size groups',
     defaultSeats: 12,
-    maxSeats: 18,
+    maxSeats: 24,
     seatLayout: { cols: 3, aisleAfter: 1 },
   },
   {
@@ -37,8 +38,8 @@ export const VEHICLE_TYPES = [
     label: 'Bus',
     icon: FaBus,
     description: 'Full-size coaches for long routes',
-    defaultSeats: 40,
-    maxSeats: 52,
+    defaultSeats: 24,
+    maxSeats: 24,
     seatLayout: { cols: 4, aisleAfter: 1 },
   },
 ]

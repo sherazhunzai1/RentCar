@@ -30,25 +30,33 @@ export async function getVehiclesByDriver(driverId) {
   return list.sort(byNewest)
 }
 
+// Empty string / null / undefined → null; otherwise a Number. Used for the
+// optional pricing fields so the backend receives numbers or null (never "").
+const numOrNull = (v) => (v === '' || v == null ? null : Number(v))
+
+// Coerce form values into the API's expected types.
+function serializeVehicle(data) {
+  const body = { ...data }
+  if (body.totalSeats != null) body.totalSeats = Number(body.totalSeats)
+  if (body.pricePerSeat != null) body.pricePerSeat = Number(body.pricePerSeat)
+  if ('frontSeatPrice' in body) body.frontSeatPrice = numOrNull(body.frontSeatPrice)
+  if ('wholeVehiclePrice' in body) body.wholeVehiclePrice = numOrNull(body.wholeVehiclePrice)
+  if (Array.isArray(body.frontSeats)) body.frontSeats = body.frontSeats.map(Number)
+  return body
+}
+
 export async function createVehicle(data) {
   return asEntity(
-    await api('/vehicles', {
-      method: 'POST',
-      body: {
-        ...data,
-        totalSeats: Number(data.totalSeats),
-        pricePerSeat: Number(data.pricePerSeat),
-      },
-    }),
+    await api('/vehicles', { method: 'POST', body: serializeVehicle(data) }),
     'vehicle',
   )
 }
 
 export async function updateVehicle(id, updates) {
-  const body = { ...updates }
-  if (body.totalSeats != null) body.totalSeats = Number(body.totalSeats)
-  if (body.pricePerSeat != null) body.pricePerSeat = Number(body.pricePerSeat)
-  return asEntity(await api(`/vehicles/${id}`, { method: 'PATCH', body }), 'vehicle')
+  return asEntity(
+    await api(`/vehicles/${id}`, { method: 'PATCH', body: serializeVehicle(updates) }),
+    'vehicle',
+  )
 }
 
 export async function deleteVehicle(id) {

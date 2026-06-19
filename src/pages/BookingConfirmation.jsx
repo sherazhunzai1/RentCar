@@ -102,8 +102,12 @@ export default function BookingConfirmation() {
             <strong>{formatTime(booking.time)}</strong>
           </div>
           <div>
-            <small><FaChair /> Seats</small>
-            <strong>{booking.seats.join(', ')}</strong>
+            <small><FaChair /> {booking.bookingType === 'whole' ? 'Booking' : 'Seats'}</small>
+            <strong>
+              {booking.bookingType === 'whole'
+                ? `Whole vehicle (${booking.seats.length} seats)`
+                : booking.seats.join(', ')}
+            </strong>
           </div>
           <div>
             <small>Passenger</small>

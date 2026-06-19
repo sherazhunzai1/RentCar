@@ -2029,6 +2029,189 @@ button {
 }
 
 /* ============================================================
+   Flexible pricing: front seats, whole-vehicle, seat picker
+   ============================================================ */
+/* Front-seat marker in the seat map */
+.seat-badge {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  font-size: 0.5rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent);
+}
+.seat-available.seat-front {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.seat-available.seat-front:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.seat-selected .seat-badge {
+  color: #fff;
+}
+.seat-booked .seat-badge {
+  color: var(--line-2);
+}
+.legend-box.front {
+  border-color: var(--accent);
+  background: #fff;
+}
+
+/* Per-seat pricing legend (vehicle details) */
+.price-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.price-legend-item {
+  font-size: 0.85rem;
+  color: var(--muted);
+  background: var(--bg-2);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.price-legend-item strong {
+  color: var(--ink);
+}
+.price-legend-front {
+  background: #fff7ed;
+  color: var(--accent);
+}
+.price-legend-front strong {
+  color: var(--accent);
+}
+.whole-vehicle-note {
+  margin-bottom: 16px;
+}
+
+/* "Book whole vehicle" option in the summary */
+.whole-option {
+  width: 100%;
+  text-align: left;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.15s;
+}
+.whole-option:hover:not(:disabled) {
+  border-color: var(--primary-light);
+}
+.whole-option.active {
+  border-color: var(--primary);
+  background: var(--primary-50);
+}
+.whole-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.whole-option-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  color: var(--ink);
+}
+.whole-option-head > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.whole-option-head strong {
+  color: var(--primary);
+}
+.whole-option small {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* Selected-seat tags in the summary */
+.summary-seats {
+  align-items: flex-start;
+}
+.seat-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: flex-end;
+}
+.seat-tag {
+  background: var(--primary-50);
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.seat-tag.front {
+  background: #fff7ed;
+  color: var(--accent);
+}
+
+/* Seat chips on the review page */
+.seat-chip.front {
+  background: #fff7ed;
+  color: var(--accent);
+}
+.seat-chip-badge {
+  font-style: normal;
+  font-size: 0.62rem;
+  font-weight: 800;
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+.seat-chip-price {
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* Front-seat number picker (post-vehicle form) */
+.seatnum-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.seatnum-chip {
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid var(--line-2);
+  border-radius: 8px;
+  background: #fff;
+  font-weight: 600;
+  color: var(--ink-2);
+  transition: all 0.15s;
+}
+.seatnum-chip:hover {
+  border-color: var(--accent);
+}
+.seatnum-chip.active {
+  border-color: var(--accent);
+  background: #fff7ed;
+  color: var(--accent);
+}
+
+/* Form helpers */
+.field-hint {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.optional {
+  color: var(--muted-2);
+  font-weight: 400;
+  font-size: 0.82rem;
+}
+
+/* ============================================================
    Mobile bottom navigation (app-style tab bar)
    ============================================================ */
 .bottom-nav {

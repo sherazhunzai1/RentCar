@@ -8,11 +8,13 @@ export default function SeatMap({
   totalSeats,
   bookedSeats = [],
   selectedSeats = [],
+  frontSeats = [],
   onToggle,
   layout = { cols: 4, aisleAfter: 1 },
   maxSelectable = Infinity,
 }) {
   const { cols, aisleAfter } = layout
+  const hasFront = frontSeats.length > 0
 
   const rows = []
   for (let i = 0; i < totalSeats; i += cols) {
@@ -46,19 +48,21 @@ export default function SeatMap({
             <div className="seat-row" key={rIdx}>
               {row.map((seat, cIdx) => {
                 const state = seatState(seat)
+                const isFront = frontSeats.includes(seat)
                 return (
                   <span key={seat} className="seat-cell">
                     {cIdx === aisleAfter && <span className="aisle" />}
                     <button
                       type="button"
-                      className={`seat seat-${state}`}
+                      className={`seat seat-${state}${isFront ? ' seat-front' : ''}`}
                       onClick={() => handleClick(seat, state)}
                       disabled={state === 'booked'}
-                      aria-label={`Seat ${seat} ${state}`}
-                      title={`Seat ${seat} — ${state}`}
+                      aria-label={`Seat ${seat} ${isFront ? 'front ' : ''}${state}`}
+                      title={`Seat ${seat}${isFront ? ' (front)' : ''} — ${state}`}
                     >
                       <FaChair />
                       <span className="seat-num">{seat}</span>
+                      {isFront && <span className="seat-badge">F</span>}
                     </button>
                   </span>
                 )
@@ -72,6 +76,7 @@ export default function SeatMap({
         <span><i className="legend-box available" /> Available</span>
         <span><i className="legend-box selected" /> Selected</span>
         <span><i className="legend-box booked" /> Booked</span>
+        {hasFront && <span><i className="legend-box front" /> Front</span>}
       </div>
     </div>
   )

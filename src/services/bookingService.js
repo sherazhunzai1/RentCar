@@ -17,16 +17,13 @@ export async function getBookingsByDriver(driverId) {
   return asList(await api(`/bookings?driverId=${driverId}`), 'bookings').sort(byNewest)
 }
 
-// The passenger is derived from the JWT on the backend; we only send the
-// vehicle, the chosen seats and the payment method.
-export async function createBooking({ vehicle, seats, payment }) {
-  return asEntity(
-    await api('/bookings', {
-      method: 'POST',
-      body: { vehicleId: vehicle.id, seats, paymentMethod: payment?.method || 'card' },
-    }),
-    'booking',
-  )
+// The passenger is derived from the JWT on the backend. We send either specific
+// seats or bookWholeVehicle, plus the payment method.
+export async function createBooking({ vehicle, seats, bookWholeVehicle, payment }) {
+  const body = { vehicleId: vehicle.id, paymentMethod: payment?.method || 'card' }
+  if (bookWholeVehicle) body.bookWholeVehicle = true
+  else body.seats = seats
+  return asEntity(await api('/bookings', { method: 'POST', body }), 'booking')
 }
 
 export async function cancelBooking(bookingId) {

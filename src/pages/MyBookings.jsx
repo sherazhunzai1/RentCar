@@ -106,7 +106,12 @@ export default function MyBookings() {
                   <div className="details-when">
                     <span><FaRegCalendarAlt /> {formatDate(b.date)}</span>
                     <span><FaRegClock /> {formatTime(b.time)}</span>
-                    <span><FaChair /> Seats {b.seats.join(', ')}</span>
+                    <span>
+                      <FaChair />{' '}
+                      {b.bookingType === 'whole'
+                        ? `Whole vehicle (${b.seats.length})`
+                        : `Seats ${b.seats.join(', ')}`}
+                    </span>
                   </div>
                 </div>
 

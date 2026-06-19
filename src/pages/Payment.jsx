@@ -12,6 +12,7 @@ import Stepper from '../components/Stepper'
 import { useBooking } from '../context/BookingContext'
 import { createBooking } from '../services/bookingService'
 import { formatCurrency } from '../utils/format'
+import { computePricing } from '../utils/pricing'
 import Seo from '../components/Seo'
 
 const METHODS = [
@@ -29,14 +30,12 @@ export default function Payment() {
   const [error, setError] = useState('')
   const [processing, setProcessing] = useState(false)
 
-  if (!draft || !draft.seats?.length) {
+  if (!draft || (!draft.bookWholeVehicle && !draft.seats?.length)) {
     return <Navigate to="/vehicles" replace />
   }
 
-  const { vehicle, seats } = draft
-  const subtotal = seats.length * vehicle.pricePerSeat
-  const serviceFee = Math.round(subtotal * 0.05)
-  const total = subtotal + serviceFee
+  const { vehicle, seats, bookWholeVehicle } = draft
+  const { subtotal, serviceFee, total } = computePricing(vehicle, { seats, bookWholeVehicle })
 
   // Light formatting so the demo card input feels real.
   const onCardNumber = (e) => {
@@ -57,6 +56,7 @@ export default function Payment() {
       const booking = await createBooking({
         vehicle,
         seats,
+        bookWholeVehicle,
         payment: { method, ...card },
       })
 
@@ -195,7 +195,7 @@ export default function Payment() {
               <span>{vehicle.fromCity} → {vehicle.toCity}</span>
             </div>
             <div className="summary-row">
-              <span>Seats {seats.join(', ')}</span>
+              <span>{bookWholeVehicle ? `Whole vehicle (${vehicle.totalSeats} seats)` : `Seats ${seats.join(', ')}`}</span>
               <span>{formatCurrency(subtotal)}</span>
             </div>
             <div className="summary-row">

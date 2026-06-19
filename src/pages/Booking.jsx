@@ -5,6 +5,7 @@ import {
   FaRegCalendarAlt,
   FaRegClock,
   FaChair,
+  FaCarSide,
   FaUser,
   FaEnvelope,
   FaPhone,
@@ -13,6 +14,7 @@ import { useBooking } from '../context/BookingContext'
 import { useAuth } from '../context/AuthContext'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
+import { computePricing, isFrontSeat } from '../utils/pricing'
 import Stepper from '../components/Stepper'
 import Seo from '../components/Seo'
 
@@ -21,16 +23,15 @@ export default function Booking() {
   const { user } = useAuth()
   const navigate = useNavigate()
 
-  if (!draft || !draft.seats?.length) {
+  if (!draft || (!draft.bookWholeVehicle && !draft.seats?.length)) {
     return <Navigate to="/vehicles" replace />
   }
 
-  const { vehicle, seats } = draft
+  const { vehicle, seats, bookWholeVehicle } = draft
   const type = getVehicleType(vehicle.vehicleType)
   const TypeIcon = type.icon
-  const subtotal = seats.length * vehicle.pricePerSeat
-  const serviceFee = Math.round(subtotal * 0.05)
-  const total = subtotal + serviceFee
+  const pricing = computePricing(vehicle, { seats, bookWholeVehicle })
+  const frontPriced = vehicle.frontSeatPrice != null
 
   return (
     <div className="container narrow checkout">
@@ -75,16 +76,31 @@ export default function Booking() {
 
           {/* Seats */}
           <div className="card">
-            <h3 className="card-section-title">Selected seats</h3>
+            <h3 className="card-section-title">
+              {bookWholeVehicle ? 'Booking' : 'Selected seats'}
+            </h3>
             <div className="seat-chips">
-              {seats.map((s) => (
-                <span key={s} className="seat-chip">
-                  <FaChair /> Seat {s}
+              {bookWholeVehicle ? (
+                <span className="seat-chip">
+                  <FaCarSide /> Whole vehicle — all {vehicle.totalSeats} seats
                 </span>
-              ))}
+              ) : (
+                pricing.seatPrices.map(({ seat, price }) => (
+                  <span
+                    key={seat}
+                    className={`seat-chip${isFrontSeat(vehicle, seat) && frontPriced ? ' front' : ''}`}
+                  >
+                    <FaChair /> Seat {seat}
+                    {isFrontSeat(vehicle, seat) && frontPriced && (
+                      <em className="seat-chip-badge">Front</em>
+                    )}
+                    <span className="seat-chip-price">{formatCurrency(price)}</span>
+                  </span>
+                ))
+              )}
             </div>
             <Link to={`/vehicles/${vehicle.id}`} className="link-btn">
-              Change seats
+              Change {bookWholeVehicle ? 'booking' : 'seats'}
             </Link>
           </div>
 
@@ -104,16 +120,20 @@ export default function Booking() {
           <div className="card summary-card">
             <h3>Price summary</h3>
             <div className="summary-row">
-              <span>{seats.length} seat(s) × {formatCurrency(vehicle.pricePerSeat)}</span>
-              <span>{formatCurrency(subtotal)}</span>
+              <span>
+                {bookWholeVehicle
+                  ? `Whole vehicle (${vehicle.totalSeats} seats)`
+                  : `${seats.length} seat${seats.length > 1 ? 's' : ''}`}
+              </span>
+              <span>{formatCurrency(pricing.subtotal)}</span>
             </div>
             <div className="summary-row">
               <span>Service fee (5%)</span>
-              <span>{formatCurrency(serviceFee)}</span>
+              <span>{formatCurrency(pricing.serviceFee)}</span>
             </div>
             <div className="summary-total">
               <span>Total</span>
-              <strong>{formatCurrency(total)}</strong>
+              <strong>{formatCurrency(pricing.total)}</strong>
             </div>
             <button className="btn btn-primary btn-block btn-lg" onClick={() => navigate('/payment')}>
               Proceed to Payment <FaArrowRight />

@@ -10,9 +10,9 @@ export function BookingProvider({ children }) {
   const value = useMemo(
     () => ({
       draft,
-      // Begin a booking for a vehicle with the chosen seats.
-      startBooking(vehicle, seats) {
-        setDraft({ vehicle, seats })
+      // Begin a booking for a vehicle. `opts` = { seats, bookWholeVehicle }.
+      startBooking(vehicle, opts = {}) {
+        setDraft({ vehicle, seats: opts.seats || [], bookWholeVehicle: !!opts.bookWholeVehicle })
       },
       updateSeats(seats) {
         setDraft((d) => (d ? { ...d, seats } : d))

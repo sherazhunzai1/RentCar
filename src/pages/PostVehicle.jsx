@@ -4,7 +4,7 @@ import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa'
 import { VEHICLE_TYPES, AMENITIES, getVehicleType } from '../data/constants'
 import { useLocations } from '../hooks/useLocations'
 import { createVehicle, updateVehicle, getVehicleById } from '../services/vehicleService'
-import { todayISO } from '../utils/format'
+import { formatCurrency, todayISO } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
 import Seo from '../components/Seo'
 
@@ -19,7 +19,12 @@ const emptyForm = {
   totalSeats: getVehicleType('car').defaultSeats,
   pricePerSeat: '',
   amenities: [],
+  frontSeatPrice: '',
+  frontSeats: [1],
+  wholeVehiclePrice: '',
 }
+
+const clamp = (n, min, max) => Math.min(Math.max(n, min), max)
 
 export default function PostVehicle() {
   const { id } = useParams()
@@ -53,6 +58,9 @@ export default function PostVehicle() {
           totalSeats: v.totalSeats,
           pricePerSeat: v.pricePerSeat,
           amenities: v.amenities || [],
+          frontSeatPrice: v.frontSeatPrice != null ? String(v.frontSeatPrice) : '',
+          frontSeats: Array.isArray(v.frontSeats) && v.frontSeats.length ? v.frontSeats : [1],
+          wholeVehiclePrice: v.wholeVehiclePrice != null ? String(v.wholeVehiclePrice) : '',
         })
       })
       .catch((e) => setError(e.message))
@@ -61,9 +69,21 @@ export default function PostVehicle() {
 
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }))
 
+  const maxSeats = getVehicleType(form.vehicleType).maxSeats
+  const seatsNum = Number(form.totalSeats) || 0
+
+  // Changing type clamps the seat count (and front seats) to the new cap.
   const pickType = (typeId) => {
     const type = getVehicleType(typeId)
-    setForm((f) => ({ ...f, vehicleType: typeId, totalSeats: type.defaultSeats }))
+    setForm((f) => {
+      const seats = clamp(Number(f.totalSeats) || type.defaultSeats, 1, type.maxSeats)
+      return {
+        ...f,
+        vehicleType: typeId,
+        totalSeats: seats,
+        frontSeats: f.frontSeats.filter((s) => s <= seats),
+      }
+    })
   }
 
   const toggleAmenity = (a) =>
@@ -74,6 +94,14 @@ export default function PostVehicle() {
         : [...f.amenities, a],
     }))
 
+  const toggleFrontSeat = (seat) =>
+    setForm((f) => ({
+      ...f,
+      frontSeats: f.frontSeats.includes(seat)
+        ? f.frontSeats.filter((s) => s !== seat)
+        : [...f.frontSeats, seat].sort((a, b) => a - b),
+    }))
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -82,22 +110,34 @@ export default function PostVehicle() {
       setError('Departure and destination cities must be different.')
       return
     }
+    if (!(seatsNum >= 1 && seatsNum <= maxSeats)) {
+      setError(`A ${getVehicleType(form.vehicleType).label} can have between 1 and ${maxSeats} seats.`)
+      return
+    }
     if (Number(form.pricePerSeat) <= 0) {
       setError('Please enter a valid price per seat.')
       return
     }
+    if (form.frontSeatPrice !== '' && Number(form.frontSeatPrice) <= 0) {
+      setError('Front seat price must be greater than 0 (or leave it blank).')
+      return
+    }
+    if (form.wholeVehiclePrice !== '' && Number(form.wholeVehiclePrice) <= 0) {
+      setError('Whole vehicle price must be greater than 0 (or leave it blank).')
+      return
+    }
+
+    const payload = {
+      ...form,
+      totalSeats: seatsNum,
+      // Drop any front seats that fall outside the final seat count.
+      frontSeats: form.frontSeats.filter((s) => s <= seatsNum),
+    }
 
     setSubmitting(true)
     try {
-      if (isEdit) {
-        await updateVehicle(id, {
-          ...form,
-          totalSeats: Number(form.totalSeats),
-          pricePerSeat: Number(form.pricePerSeat),
-        })
-      } else {
-        await createVehicle(form)
-      }
+      if (isEdit) await updateVehicle(id, payload)
+      else await createVehicle(payload)
       navigate('/driver/dashboard')
     } catch (err) {
       setError(err.message)
@@ -113,7 +153,8 @@ export default function PostVehicle() {
     )
   }
 
-  const maxSeats = getVehicleType(form.vehicleType).maxSeats
+  const seatNumbers = Array.from({ length: clamp(seatsNum, 0, maxSeats) }, (_, i) => i + 1)
+  const showFrontSeatsPicker = form.frontSeatPrice !== ''
 
   return (
     <div className="container narrow section">
@@ -176,18 +217,26 @@ export default function PostVehicle() {
               />
             </div>
           </div>
+          <div className="field">
+            <label>Total seats</label>
+            <input
+              type="number"
+              min="1"
+              max={maxSeats}
+              value={form.totalSeats}
+              onChange={(e) => set('totalSeats', e.target.value)}
+              required
+            />
+            <small className="field-hint">
+              You choose the seat count — {getVehicleType(form.vehicleType).label} allows 1–{maxSeats} seats.
+            </small>
+          </div>
+        </div>
+
+        {/* Pricing */}
+        <div className="card">
+          <h3 className="card-section-title">Pricing</h3>
           <div className="form-row">
-            <div className="field">
-              <label>Total seats (max {maxSeats})</label>
-              <input
-                type="number"
-                min="1"
-                max={maxSeats}
-                value={form.totalSeats}
-                onChange={(e) => set('totalSeats', e.target.value)}
-                required
-              />
-            </div>
             <div className="field">
               <label>Price per seat (PKR)</label>
               <input
@@ -200,12 +249,59 @@ export default function PostVehicle() {
                 required
               />
             </div>
+            <div className="field">
+              <label>Front seat price (PKR) <span className="optional">— optional</span></label>
+              <input
+                type="number"
+                min="0"
+                step="50"
+                placeholder="Leave blank to use the normal price"
+                value={form.frontSeatPrice}
+                onChange={(e) => set('frontSeatPrice', e.target.value)}
+              />
+            </div>
+          </div>
+
+          {showFrontSeatsPicker && (
+            <div className="field">
+              <label>Which seats are &quot;front&quot;?</label>
+              <p className="muted-note">These seats use the front seat price. Usually seat 1.</p>
+              <div className="seatnum-picker">
+                {seatNumbers.map((n) => (
+                  <button
+                    type="button"
+                    key={n}
+                    className={`seatnum-chip ${form.frontSeats.includes(n) ? 'active' : ''}`}
+                    onClick={() => toggleFrontSeat(n)}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="field">
+            <label>Whole vehicle price (PKR) <span className="optional">— optional</span></label>
+            <input
+              type="number"
+              min="0"
+              step="100"
+              placeholder="Flat price to reserve the entire vehicle"
+              value={form.wholeVehiclePrice}
+              onChange={(e) => set('wholeVehiclePrice', e.target.value)}
+            />
+            <small className="field-hint">
+              {form.wholeVehiclePrice !== '' && Number(form.wholeVehiclePrice) > 0
+                ? `Passengers can book all ${seatsNum || maxSeats} seats for ${formatCurrency(Number(form.wholeVehiclePrice))}.`
+                : 'Leave blank if you don’t offer whole-vehicle booking.'}
+            </small>
           </div>
         </div>
 
         {/* Route */}
         <div className="card">
-          <h3 className="card-section-title">Route & schedule</h3>
+          <h3 className="card-section-title">Route &amp; schedule</h3>
           <div className="form-row">
             <div className="field">
               <label>From city</label>
