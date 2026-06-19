@@ -1925,6 +1925,7 @@ button {
 /* ---- Data table ---- */
 .table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: #fff;
@@ -2458,6 +2459,7 @@ button {
   width: 100%;
   max-width: 420px;
   height: 100%;
+  height: 100dvh; /* dynamic viewport — accounts for mobile browser chrome */
   background: var(--bg);
   display: flex;
   flex-direction: column;
@@ -2536,7 +2538,10 @@ button {
 }
 .chat-body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding: 18px;
   display: flex;
   flex-direction: column;
@@ -2628,15 +2633,18 @@ button {
   display: flex;
   gap: 8px;
   padding: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   background: #fff;
   border-top: 1px solid var(--line);
 }
 .chat-input input {
   flex: 1;
+  min-width: 0;
   padding: 11px 15px;
   border: 1px solid var(--line-2);
   border-radius: 999px;
-  font-size: 0.92rem;
+  /* 16px avoids iOS auto-zoom on focus */
+  font-size: 16px;
   color: var(--ink);
 }
 .chat-input input:focus {
@@ -2653,11 +2661,30 @@ button {
 }
 .chat-closed {
   padding: 14px;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   background: var(--bg-2);
   border-top: 1px solid var(--line);
   text-align: center;
   color: var(--muted);
   font-size: 0.88rem;
+}
+
+/* Full-screen chat + bigger touch targets on phones */
+@media (max-width: 540px) {
+  .chat-drawer {
+    max-width: 100%;
+  }
+  .chat-icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+  .chat-input .btn {
+    width: 46px;
+    height: 46px;
+  }
+  .chat-header {
+    padding: 14px 16px;
+  }
 }
 
 /* ============================================================
@@ -2811,8 +2838,10 @@ button {
   }
   .booking-row-side {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 10px;
     text-align: left;
     border-top: 1px solid var(--line);
     padding-top: 14px;

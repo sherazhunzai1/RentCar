@@ -162,6 +162,13 @@ function ChatPanel({ booking, onClose, connected }) {
     if (next) sounds.send() // quick confirmation that sound is on
   }
 
+  // Keep the latest message visible when the mobile keyboard opens.
+  const scrollToEnd = () => {
+    setTimeout(() => {
+      if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight
+    }, 250)
+  }
+
   const stopTyping = useCallback(() => {
     clearTimeout(typingTimer.current)
     if (typingSent.current) {
@@ -299,6 +306,7 @@ function ChatPanel({ booking, onClose, connected }) {
               value={text}
               onChange={onChangeText}
               onBlur={stopTyping}
+              onFocus={scrollToEnd}
               placeholder="Type a message…"
               maxLength={2000}
               autoFocus
