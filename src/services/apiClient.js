@@ -13,13 +13,17 @@ export const tokenStore = {
   clear: () => localStorage.removeItem(TOKEN_KEY),
 }
 
-// Origin of the Socket.IO server. Defaults to the origin of VITE_API_URL
-// (e.g. https://api.gaadi.pk/api → https://api.gaadi.pk); if VITE_API_URL is
-// relative (/api), uses the page origin. Override with VITE_SOCKET_URL.
-// Called only on the client (window is available).
-export function getApiOrigin() {
-  const override = import.meta.env.VITE_SOCKET_URL
-  if (override) return override
+// Base URL of the Socket.IO server (booking chat). Prefers an explicit
+// VITE_SOCKETS_URL / VITE_SOCKET_URL (the Socket.IO server may live on a
+// different host than the REST API); otherwise falls back to the origin of
+// VITE_API_URL (e.g. https://api.gaadi.pk/api → https://api.gaadi.pk), or the
+// page origin when VITE_API_URL is relative. Client-only (uses window).
+//
+// NOTE: the variable MUST be VITE_-prefixed and the app rebuilt after changing
+// it — Vite only exposes VITE_* env vars and bakes them in at build time.
+export function getSocketUrl() {
+  const explicit = import.meta.env.VITE_SOCKETS_URL || import.meta.env.VITE_SOCKET_URL
+  if (explicit) return explicit.replace(/\/+$/, '')
   const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost'
   try {
     return new URL(API_URL, base).origin

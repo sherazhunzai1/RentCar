@@ -1,13 +1,17 @@
 // Single shared Socket.IO connection for booking chat. Connected once after
 // login (see ChatContext) with the JWT; reused across all chat screens.
 import { io } from 'socket.io-client'
-import { tokenStore, getApiOrigin } from './apiClient'
+import { tokenStore, getSocketUrl } from './apiClient'
 
 let socket = null
 
 export function getSocket() {
   if (!socket) {
-    socket = io(getApiOrigin(), {
+    const url = getSocketUrl()
+    // Visible in the console so you can confirm the chat is targeting the right
+    // Socket.IO server (paired with the connect_error log in ChatContext).
+    console.info('[chat] socket target:', url)
+    socket = io(url, {
       auth: { token: tokenStore.get() },
       // Let Socket.IO negotiate the transport (HTTP long-polling first, then
       // upgrade to WebSocket). This still connects when a raw WebSocket is
