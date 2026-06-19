@@ -13,6 +13,21 @@ export const tokenStore = {
   clear: () => localStorage.removeItem(TOKEN_KEY),
 }
 
+// Origin of the Socket.IO server. Defaults to the origin of VITE_API_URL
+// (e.g. https://api.gaadi.pk/api → https://api.gaadi.pk); if VITE_API_URL is
+// relative (/api), uses the page origin. Override with VITE_SOCKET_URL.
+// Called only on the client (window is available).
+export function getApiOrigin() {
+  const override = import.meta.env.VITE_SOCKET_URL
+  if (override) return override
+  const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost'
+  try {
+    return new URL(API_URL, base).origin
+  } catch {
+    return base
+  }
+}
+
 function safeParse(text) {
   try {
     return JSON.parse(text)

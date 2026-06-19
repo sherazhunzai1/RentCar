@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import BottomNav from './components/BottomNav'
+import ChatModal from './components/ChatModal'
 import ScrollToTop from './components/ScrollToTop'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -110,6 +111,7 @@ export default function App() {
       </main>
       <Footer />
       <BottomNav />
+      <ChatModal />
     </div>
   )
 }

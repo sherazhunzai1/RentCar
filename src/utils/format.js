@@ -38,3 +38,11 @@ export function formatTime(timeStr) {
 export function todayISO() {
   return new Date().toISOString().split('T')[0]
 }
+
+// Formats an ISO timestamp to a short time, e.g. "2:05 PM" (for chat messages).
+export function formatMessageTime(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+}
