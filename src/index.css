@@ -2249,6 +2249,38 @@ a.contact-card:hover {
   color: var(--muted);
 }
 
+/* Legal pages (Terms of Service) */
+.legal-page {
+  max-width: 800px;
+}
+.legal-updated {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.legal-prose > p {
+  color: var(--ink-2);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+.legal-prose h2 {
+  font-size: 1.2rem;
+  margin: 30px 0 10px;
+}
+.legal-prose ul {
+  margin: 0 0 16px;
+  padding-left: 22px;
+  list-style: disc;
+}
+.legal-prose li {
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin-bottom: 7px;
+}
+.legal-prose a {
+  color: var(--primary);
+  font-weight: 500;
+}
+
 @media (max-width: 720px) {
   .founder-card {
     flex-direction: column;

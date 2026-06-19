@@ -45,6 +45,13 @@ const ROUTES = [
       'Get in touch with the gaadi.pk team — email contact@gaadi.pk, call or message us on WhatsApp for bookings, support or feedback.',
     index: true,
   },
+  {
+    path: '/terms',
+    title: 'Terms of Service',
+    description:
+      'The terms that govern using gaadi.pk to book seats and vehicles to and from Gilgit-Baltistan, and to list vehicles as a driver.',
+    index: true,
+  },
   { path: '/login', title: 'Login', description: DEFAULT_DESC, index: false },
 ]
 

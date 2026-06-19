@@ -38,10 +38,7 @@ export default function Footer() {
 
         <div className="footer-col">
           <h4>Support</h4>
-          <a href="#">Help Center</a>
-          <a href="#">Safety</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Privacy Policy</a>
+          <Link to="/terms">Terms of Service</Link>
         </div>
       </div>
 
