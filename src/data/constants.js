@@ -2,8 +2,11 @@
 // When the backend is ready these can come from an API endpoint instead.
 import { FaCar, FaShuttleVan, FaBus, FaTruckPickup } from 'react-icons/fa'
 
-// Vehicle types a driver can post. `seatLayout` describes how the seat map
-// is rendered: `cols` seats per row and an optional `aisleAfter` index.
+// Vehicle types a driver can post. `seatLayout` drives the seat map:
+//   hasDriver  – show the (non-bookable) driver position in the front row
+//   frontRow   – bookable seats beside the driver in the front row (seat 1…)
+//   cols       – seats per row for the remaining rows
+//   aisleAfter – optional column index to insert an aisle gap (van/bus)
 // `maxSeats` mirrors the backend cap (car ≤ 4; suv/van/bus ≤ 24).
 export const VEHICLE_TYPES = [
   {
@@ -13,7 +16,7 @@ export const VEHICLE_TYPES = [
     description: 'Sedans & hatchbacks for small groups',
     defaultSeats: 4,
     maxSeats: 4,
-    seatLayout: { cols: 2, aisleAfter: 1 },
+    seatLayout: { hasDriver: true, frontRow: 1, cols: 3 },
   },
   {
     id: 'suv',
@@ -22,7 +25,7 @@ export const VEHICLE_TYPES = [
     description: 'Spacious rides for families & rough roads',
     defaultSeats: 6,
     maxSeats: 24,
-    seatLayout: { cols: 3, aisleAfter: 1 },
+    seatLayout: { hasDriver: true, frontRow: 1, cols: 3 },
   },
   {
     id: 'van',
@@ -31,7 +34,7 @@ export const VEHICLE_TYPES = [
     description: 'Mini-vans & coasters for mid-size groups',
     defaultSeats: 12,
     maxSeats: 24,
-    seatLayout: { cols: 3, aisleAfter: 1 },
+    seatLayout: { hasDriver: true, frontRow: 1, cols: 3, aisleAfter: 2 },
   },
   {
     id: 'bus',
@@ -40,7 +43,7 @@ export const VEHICLE_TYPES = [
     description: 'Full-size coaches for long routes',
     defaultSeats: 24,
     maxSeats: 24,
-    seatLayout: { cols: 4, aisleAfter: 1 },
+    seatLayout: { hasDriver: true, frontRow: 1, cols: 4, aisleAfter: 2 },
   },
 ]
 

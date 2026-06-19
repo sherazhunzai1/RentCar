@@ -1162,21 +1162,40 @@ button {
   margin: 0 auto;
   width: 100%;
 }
-.seatmap-front {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: flex-end;
+/* Front row (driver + front passenger seat) sits above a dashed divider */
+.seat-row-front {
   padding-bottom: 16px;
   margin-bottom: 16px;
   border-bottom: 2px dashed var(--line-2);
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 600;
 }
-.seatmap-front svg {
-  font-size: 1.5rem;
+.seat-driver {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border: 2px dashed var(--line-2);
+  border-radius: 10px 10px 6px 6px;
+  background: var(--bg-2);
   color: var(--ink-2);
+  display: grid;
+  place-items: center;
+  cursor: default;
+  flex-shrink: 0;
+}
+.seat-driver svg {
+  font-size: 1.35rem;
+  margin-bottom: 4px;
+}
+.seat-driver-text {
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.46rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--muted);
 }
 .seatmap-rows {
   display: flex;
