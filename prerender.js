@@ -33,7 +33,7 @@ const ROUTES = [
   },
   {
     path: '/about',
-    title: 'About Us — gaadi.pk & its Founder Sheraz Ali',
+    title: 'About Us & Our Founder, Sheraz Ali',
     description:
       'gaadi.pk was built by Sheraz Ali, a senior full-stack & blockchain developer and a native of Hunza, to make finding a seat or vehicle to and from Gilgit-Baltistan simple and reliable.',
     index: true,
