@@ -1,11 +1,12 @@
 import { FaMapMarkerAlt, FaFlag, FaRegCalendarAlt, FaSearch } from 'react-icons/fa'
-import { CITIES } from '../data/cities'
 import { VEHICLE_TYPES } from '../data/constants'
+import { useLocations } from '../hooks/useLocations'
 import { todayISO } from '../utils/format'
 
 // Reusable route search / filter form.
 // `values` = { fromCity, toCity, date, vehicleType }
 export default function SearchBar({ values, onChange, onSubmit, variant = 'hero' }) {
+  const { cities } = useLocations()
   const set = (key) => (e) => onChange({ ...values, [key]: e.target.value })
 
   const handleSubmit = (e) => {
@@ -21,7 +22,7 @@ export default function SearchBar({ values, onChange, onSubmit, variant = 'hero'
         </label>
         <select value={values.fromCity} onChange={set('fromCity')}>
           <option value="">Any city</option>
-          {CITIES.map((c) => (
+          {cities.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
@@ -35,7 +36,7 @@ export default function SearchBar({ values, onChange, onSubmit, variant = 'hero'
         </label>
         <select value={values.toCity} onChange={set('toCity')}>
           <option value="">Any city</option>
-          {CITIES.map((c) => (
+          {cities.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>

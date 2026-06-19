@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa'
-import { CITIES } from '../data/cities'
 import { VEHICLE_TYPES, AMENITIES, getVehicleType } from '../data/constants'
+import { useLocations } from '../hooks/useLocations'
 import { createVehicle, updateVehicle, getVehicleById } from '../services/vehicleService'
 import { todayISO } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
@@ -26,6 +26,7 @@ export default function PostVehicle() {
   const isEdit = Boolean(id)
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { cities } = useLocations()
 
   const [form, setForm] = useState(emptyForm)
   const [error, setError] = useState('')
@@ -210,7 +211,7 @@ export default function PostVehicle() {
               <label>From city</label>
               <select value={form.fromCity} onChange={(e) => set('fromCity', e.target.value)} required>
                 <option value="">Select city</option>
-                {CITIES.map((c) => (
+                {cities.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
@@ -219,7 +220,7 @@ export default function PostVehicle() {
               <label>To city</label>
               <select value={form.toCity} onChange={(e) => set('toCity', e.target.value)} required>
                 <option value="">Select city</option>
-                {CITIES.map((c) => (
+                {cities.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>

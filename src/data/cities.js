@@ -1,5 +1,6 @@
-// Cities available for route selection.
-// Swap this for an API-backed list once the backend exposes one.
+// Fallback city list. The app now loads locations from GET /api/locations
+// (see useLocations); this static list is only used if that request fails so
+// the route dropdowns are never empty.
 export const CITIES = [
   'Karachi',
   'Lahore',
