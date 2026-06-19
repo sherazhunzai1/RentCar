@@ -31,6 +31,20 @@ const ROUTES = [
       'Create your gaadi.pk account to book seats to Gilgit-Baltistan, or post your vehicle on routes to Hunza, Gilgit, Skardu and Ghizer.',
     index: true,
   },
+  {
+    path: '/about',
+    title: 'About Us — gaadi.pk & its Founder Sheraz Ali',
+    description:
+      'gaadi.pk was built by Sheraz Ali, a senior full-stack & blockchain developer and a native of Hunza, to make finding a seat or vehicle to and from Gilgit-Baltistan simple and reliable.',
+    index: true,
+  },
+  {
+    path: '/contact',
+    title: 'Contact Us',
+    description:
+      'Get in touch with the gaadi.pk team — email contact@gaadi.pk, call or message us on WhatsApp for bookings, support or feedback.',
+    index: true,
+  },
   { path: '/login', title: 'Login', description: DEFAULT_DESC, index: false },
 ]
 
