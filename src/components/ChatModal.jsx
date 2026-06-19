@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { FaTimes, FaPaperPlane } from 'react-icons/fa'
+import { FaTimes, FaPaperPlane, FaVolumeUp, FaVolumeMute } from 'react-icons/fa'
 import { useChat } from '../context/ChatContext'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { getSocket } from '../services/socketService'
 import { getMessages, sendMessage, markRead } from '../services/chatService'
+import { sounds, soundEnabled, setSoundEnabled } from '../services/soundService'
 import { formatDate, formatMessageTime } from '../utils/format'
 
 const isClosedError = (m = '') => /confirm|closed/i.test(m)
@@ -29,12 +30,14 @@ function ChatPanel({ booking, onClose, connected }) {
   const [sending, setSending] = useState(false)
   const [closed, setClosed] = useState(booking.status !== 'confirmed')
   const [otherTyping, setOtherTyping] = useState(false)
+  const [soundOn, setSoundOn] = useState(soundEnabled())
 
   const listRef = useRef(null)
   const typingTimer = useRef(null)
   const typingSent = useRef(false)
   const messagesRef = useRef([])
   const otherTypingTimer = useRef(null)
+  const prevTypingRef = useRef(false)
 
   // Keep a ref of the latest messages for the reconnect "fetch since last" sync.
   useEffect(() => {
@@ -96,8 +99,12 @@ function ChatPanel({ booking, onClose, connected }) {
 
     const onMessage = (msg) => {
       if (!msg || msg.bookingId !== bookingId) return
+      const isNew = !messagesRef.current.some((m) => m.id === msg.id)
       addMessage(msg)
-      if (msg.senderId !== user.id) markReadSafe()
+      if (msg.senderId !== user.id && isNew) {
+        markReadSafe()
+        sounds.receive()
+      }
     }
     const onTyping = (e) => {
       if (!e || e.bookingId !== bookingId || e.userId === user.id) return
@@ -141,6 +148,20 @@ function ChatPanel({ booking, onClose, connected }) {
     if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight
   }, [messages, otherTyping])
 
+  // Play a sound as the typing bubble appears / disappears.
+  useEffect(() => {
+    if (otherTyping && !prevTypingRef.current) sounds.typingStart()
+    else if (!otherTyping && prevTypingRef.current) sounds.typingStop()
+    prevTypingRef.current = otherTyping
+  }, [otherTyping])
+
+  const toggleSound = () => {
+    const next = !soundOn
+    setSoundEnabled(next)
+    setSoundOn(next)
+    if (next) sounds.send() // quick confirmation that sound is on
+  }
+
   const stopTyping = useCallback(() => {
     clearTimeout(typingTimer.current)
     if (typingSent.current) {
@@ -168,6 +189,7 @@ function ChatPanel({ booking, onClose, connected }) {
     if (!body || sending || closed) return
     setSending(true)
     stopTyping()
+    sounds.send()
     const socket = getSocket()
 
     if (socket && socket.connected) {
@@ -220,9 +242,19 @@ function ChatPanel({ booking, onClose, connected }) {
               {connected ? 'Live' : 'Connecting…'}
             </span>
           </div>
-          <button className="chat-close" onClick={onClose} aria-label="Close chat">
-            <FaTimes />
-          </button>
+          <div className="chat-header-actions">
+            <button
+              className="chat-icon-btn"
+              onClick={toggleSound}
+              aria-label={soundOn ? 'Mute chat sounds' : 'Unmute chat sounds'}
+              title={soundOn ? 'Mute sounds' : 'Unmute sounds'}
+            >
+              {soundOn ? <FaVolumeUp /> : <FaVolumeMute />}
+            </button>
+            <button className="chat-icon-btn" onClick={onClose} aria-label="Close chat">
+              <FaTimes />
+            </button>
+          </div>
         </header>
 
         <div className="chat-body" ref={listRef}>

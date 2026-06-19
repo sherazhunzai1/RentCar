@@ -2514,7 +2514,13 @@ button {
 .chat-status.off {
   color: var(--warning);
 }
-.chat-close {
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.chat-icon-btn {
   background: var(--bg-2);
   border: none;
   width: 34px;
@@ -2525,7 +2531,7 @@ button {
   color: var(--ink-2);
   flex-shrink: 0;
 }
-.chat-close:hover {
+.chat-icon-btn:hover {
   background: var(--line);
 }
 .chat-body {

@@ -3,6 +3,7 @@ import { useAuth } from './AuthContext'
 import { connectSocket, disconnectSocket } from '../services/socketService'
 import { getMessages } from '../services/chatService'
 import { getBookingsByUser, getBookingsByDriver } from '../services/bookingService'
+import { sounds, primeAudio } from '../services/soundService'
 
 const ChatContext = createContext(null)
 
@@ -35,6 +36,7 @@ export function ChatProvider({ children }) {
       // The open chat handles its own messages (and marks them read).
       if (msg.bookingId === openIdRef.current) return
       setUnread((u) => ({ ...u, [msg.bookingId]: (u[msg.bookingId] || 0) + 1 }))
+      sounds.receive() // background notification for a non-open chat
     }
 
     socket.on('connect', onConnect)
@@ -50,6 +52,22 @@ export function ChatProvider({ children }) {
       socket.off('chat:message', onMessage)
     }
   }, [isAuthenticated, userId])
+
+  // Unlock the Web Audio context on the first user interaction so chat sounds
+  // can play (browsers block audio until a gesture).
+  useEffect(() => {
+    const unlock = () => {
+      primeAudio()
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('keydown', unlock)
+    }
+    window.addEventListener('pointerdown', unlock)
+    window.addEventListener('keydown', unlock)
+    return () => {
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('keydown', unlock)
+    }
+  }, [])
 
   const openChat = useCallback((booking) => {
     openIdRef.current = booking.id
