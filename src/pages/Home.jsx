@@ -14,9 +14,11 @@ import {
 } from 'react-icons/fa'
 import SearchBar from '../components/SearchBar'
 import VehicleCard from '../components/VehicleCard'
+import Faq from '../components/Faq'
 import { VEHICLE_TYPES } from '../data/constants'
 import { POPULAR_ROUTES, routeHref } from '../data/popularRoutes'
 import { getVehicles } from '../services/vehicleService'
+import { formatCurrency } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
 import Seo from '../components/Seo'
 
@@ -30,9 +32,22 @@ export default function Home() {
     vehicleType: '',
   })
   const [featured, setFeatured] = useState([])
+  const [routePrices, setRoutePrices] = useState({})
 
   useEffect(() => {
-    getVehicles().then((all) => setFeatured(all.slice(0, 3)))
+    getVehicles()
+      .then((all) => {
+        setFeatured(all.slice(0, 3))
+        // Cheapest seat price per route, for the "from PKR …/seat" labels.
+        const prices = {}
+        for (const v of all) {
+          const key = `${v.fromCity}|${v.toCity}`
+          const seatMin = Math.min(v.pricePerSeat, v.frontSeatPrice ?? v.pricePerSeat)
+          if (prices[key] == null || seatMin < prices[key]) prices[key] = seatMin
+        }
+        setRoutePrices(prices)
+      })
+      .catch(() => {})
   }, [])
 
   const runSearch = (values) => {
@@ -129,25 +144,35 @@ export default function Home() {
             <p>Book seats or a whole vehicle on the most-travelled routes up north.</p>
           </div>
           <div className="route-card-grid">
-            {POPULAR_ROUTES.map((route) => (
-              <Link
-                key={`${route.from}-${route.to}`}
-                to={routeHref(route)}
-                className="route-card"
-                aria-label={`Vehicles from ${route.from} to ${route.to}`}
-              >
-                <div className="route-card-cities">
-                  <span className="route-card-from">{route.from}</span>
-                  <FaArrowRight className="route-card-arrow" />
-                  <span className="route-card-to">
-                    <FaMountain /> {route.to}
+            {POPULAR_ROUTES.map((route) => {
+              const price = routePrices[`${route.from}|${route.to}`]
+              return (
+                <Link
+                  key={`${route.from}-${route.to}`}
+                  to={routeHref(route)}
+                  className="route-card"
+                  aria-label={`Vehicles from ${route.from} to ${route.to}`}
+                >
+                  <div className="route-card-cities">
+                    <span className="route-card-from">{route.from}</span>
+                    <FaArrowRight className="route-card-arrow" />
+                    <span className="route-card-to">
+                      <FaMountain /> {route.to}
+                    </span>
+                  </div>
+                  <span className="route-card-go">
+                    {price != null ? (
+                      <>
+                        from <strong>{formatCurrency(price)}</strong>/seat
+                      </>
+                    ) : (
+                      <>Find seats</>
+                    )}
+                    <FaArrowRight />
                   </span>
-                </div>
-                <span className="route-card-go">
-                  Find seats <FaArrowRight />
-                </span>
-              </Link>
-            ))}
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -238,6 +263,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FAQ */}
+      <Faq />
 
       {/* CTA */}
       {!isDriver && (

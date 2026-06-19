@@ -844,6 +844,56 @@ button {
   }
 }
 
+.route-card-go strong {
+  color: var(--primary);
+}
+
+/* ============================================================
+   FAQ accordion (homepage)
+   ============================================================ */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.faq-item {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 20px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--primary);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.faq-item[open] .faq-icon {
+  transform: rotate(45deg);
+}
+.faq-answer {
+  padding: 0 20px 18px;
+  color: var(--muted);
+}
+.faq-answer p {
+  margin: 0;
+  line-height: 1.6;
+}
+
 /* ============================================================
    Vehicle card & grid
    ============================================================ */
