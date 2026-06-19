@@ -9,8 +9,12 @@ export function getSocket() {
   if (!socket) {
     socket = io(getApiOrigin(), {
       auth: { token: tokenStore.get() },
-      transports: ['websocket'],
+      // Let Socket.IO negotiate the transport (HTTP long-polling first, then
+      // upgrade to WebSocket). This still connects when a raw WebSocket is
+      // blocked by a proxy/firewall — unlike forcing transports: ['websocket'].
       autoConnect: false,
+      reconnection: true,
+      reconnectionDelay: 1000,
     })
   }
   return socket

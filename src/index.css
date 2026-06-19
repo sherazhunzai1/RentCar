@@ -2493,6 +2493,27 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.chat-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-top: 1px;
+}
+.chat-status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.chat-status.on {
+  color: var(--success);
+}
+.chat-status.off {
+  color: var(--warning);
+}
 .chat-close {
   background: var(--bg-2);
   border: none;

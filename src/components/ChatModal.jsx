@@ -10,13 +10,15 @@ import { formatDate, formatMessageTime } from '../utils/format'
 const isClosedError = (m = '') => /confirm|closed/i.test(m)
 
 export default function ChatModal() {
-  const { openBooking, closeChat } = useChat()
+  const { openBooking, closeChat, connected } = useChat()
   if (!openBooking) return null
   // key remounts the panel (fresh state) when switching bookings.
-  return <ChatPanel key={openBooking.id} booking={openBooking} onClose={closeChat} />
+  return (
+    <ChatPanel key={openBooking.id} booking={openBooking} onClose={closeChat} connected={connected} />
+  )
 }
 
-function ChatPanel({ booking, onClose }) {
+function ChatPanel({ booking, onClose, connected }) {
   const { user } = useAuth()
   const toast = useToast()
   const bookingId = booking.id
@@ -31,6 +33,12 @@ function ChatPanel({ booking, onClose }) {
   const listRef = useRef(null)
   const typingTimer = useRef(null)
   const typingSent = useRef(false)
+  const messagesRef = useRef([])
+
+  // Keep a ref of the latest messages for the reconnect "fetch since last" sync.
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
 
   const addMessage = useCallback((msg) => {
     if (!msg) return
@@ -66,12 +74,24 @@ function ChatPanel({ booking, onClose }) {
         if (isClosedError(e.message)) setClosed(true)
       })
 
-    socket.emit('chat:join', { bookingId }, (res) => {
-      if (res && res.ok === false) {
-        toast(res.error || 'Could not open this chat.', 'error')
-        setClosed(true)
+    // Join the room (and, on every reconnect, re-join + pull any missed
+    // messages) so live delivery resumes after a dropped connection.
+    const joinAndSync = () => {
+      socket.emit('chat:join', { bookingId }, (res) => {
+        if (res && res.ok === false) {
+          toast(res.error || 'Could not open this chat.', 'error')
+          setClosed(true)
+        }
+      })
+      const last = messagesRef.current[messagesRef.current.length - 1]?.createdAt
+      if (last) {
+        getMessages(bookingId, last)
+          .then((msgs) => msgs.forEach(addMessage))
+          .catch(() => {})
       }
-    })
+    }
+    if (socket.connected) joinAndSync()
+    socket.on('connect', joinAndSync)
 
     const onMessage = (msg) => {
       if (!msg || msg.bookingId !== bookingId) return
@@ -97,6 +117,7 @@ function ChatPanel({ booking, onClose }) {
       active = false
       if (typingSent.current) socket.emit('chat:typing', { bookingId, isTyping: false })
       socket.emit('chat:leave', { bookingId })
+      socket.off('connect', joinAndSync)
       socket.off('chat:message', onMessage)
       socket.off('chat:typing', onTyping)
       socket.off('chat:read', onRead)
@@ -184,6 +205,9 @@ function ChatPanel({ booking, onClose }) {
             <strong>{otherName}</strong>
             <span>
               {booking.fromCity} → {booking.toCity} · {formatDate(booking.date)}
+            </span>
+            <span className={`chat-status ${connected ? 'on' : 'off'}`}>
+              {connected ? 'Live' : 'Connecting…'}
             </span>
           </div>
           <button className="chat-close" onClick={onClose} aria-label="Close chat">

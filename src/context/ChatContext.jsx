@@ -10,6 +10,7 @@ export function ChatProvider({ children }) {
   const { isAuthenticated, user } = useAuth()
   const [openBooking, setOpenBooking] = useState(null)
   const [unread, setUnread] = useState({}) // { [bookingId]: count }
+  const [connected, setConnected] = useState(false)
   const openIdRef = useRef(null)
   const userId = user?.id
 
@@ -17,10 +18,17 @@ export function ChatProvider({ children }) {
   useEffect(() => {
     if (!isAuthenticated) {
       disconnectSocket()
+      setConnected(false)
       setUnread({})
       return
     }
     const socket = connectSocket()
+
+    const onConnect = () => setConnected(true)
+    const onDisconnect = () => setConnected(false)
+    const onError = (err) =>
+      // Surfaces the reason live chat isn't connecting (CORS, auth, transport…).
+      console.warn('[chat] socket connect_error:', err?.message || err)
 
     const onMessage = (msg) => {
       if (!msg || msg.senderId === userId) return
@@ -28,9 +36,17 @@ export function ChatProvider({ children }) {
       if (msg.bookingId === openIdRef.current) return
       setUnread((u) => ({ ...u, [msg.bookingId]: (u[msg.bookingId] || 0) + 1 }))
     }
+
+    socket.on('connect', onConnect)
+    socket.on('disconnect', onDisconnect)
+    socket.on('connect_error', onError)
     socket.on('chat:message', onMessage)
+    if (socket.connected) setConnected(true)
 
     return () => {
+      socket.off('connect', onConnect)
+      socket.off('disconnect', onDisconnect)
+      socket.off('connect_error', onError)
       socket.off('chat:message', onMessage)
     }
   }, [isAuthenticated, userId])
@@ -92,8 +108,8 @@ export function ChatProvider({ children }) {
   )
 
   const value = useMemo(
-    () => ({ openBooking, openChat, closeChat, unread, totalUnread, refreshUnread }),
-    [openBooking, openChat, closeChat, unread, totalUnread, refreshUnread],
+    () => ({ openBooking, openChat, closeChat, unread, totalUnread, refreshUnread, connected }),
+    [openBooking, openChat, closeChat, unread, totalUnread, refreshUnread, connected],
   )
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
