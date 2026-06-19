@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { FaUserCircle } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
+import { useChat } from '../context/ChatContext'
 import Logo from './Logo'
 
 // Top header. On desktop it shows the full horizontal nav; on mobile the links
@@ -8,12 +9,16 @@ import Logo from './Logo'
 // brand-only header bar.
 export default function Navbar() {
   const { isAuthenticated, isDriver, user, logout } = useAuth()
+  const { totalUnread } = useChat()
   const navigate = useNavigate()
 
   const handleLogout = async () => {
     await logout()
     navigate('/')
   }
+
+  const unreadBadge =
+    totalUnread > 0 ? <span className="nav-unread-inline">{totalUnread > 9 ? '9+' : totalUnread}</span> : null
 
   return (
     <header className="navbar">
@@ -39,14 +44,16 @@ export default function Navbar() {
 
           {isAuthenticated && isDriver && (
             <>
-              <NavLink to="/driver/dashboard">Dashboard</NavLink>
+              <NavLink to="/driver/dashboard">Dashboard{unreadBadge}</NavLink>
               <Link to="/driver/post" className="btn btn-primary nav-cta">
                 + Post Vehicle
               </Link>
             </>
           )}
 
-          {isAuthenticated && !isDriver && <NavLink to="/my-bookings">My Bookings</NavLink>}
+          {isAuthenticated && !isDriver && (
+            <NavLink to="/my-bookings">My Bookings{unreadBadge}</NavLink>
+          )}
 
           {isAuthenticated && (
             <div className="nav-user">

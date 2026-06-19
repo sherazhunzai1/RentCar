@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { useAuth } from './AuthContext'
 import { connectSocket, disconnectSocket } from '../services/socketService'
 import { getMessages } from '../services/chatService'
+import { getBookingsByUser, getBookingsByDriver } from '../services/bookingService'
 
 const ChatContext = createContext(null)
 
@@ -68,9 +69,31 @@ export function ChatProvider({ children }) {
     [userId],
   )
 
+  // Seed unread badges once on login (the user's own confirmed bookings) so the
+  // navbar / bottom-nav indicator works app-wide, before visiting My Bookings.
+  useEffect(() => {
+    if (!isAuthenticated || !user) return
+    let active = true
+    const fetchBookings = user.role === 'driver' ? getBookingsByDriver : getBookingsByUser
+    fetchBookings(user.id)
+      .then((list) => {
+        if (active) refreshUnread(list)
+      })
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+    // refreshUnread is stable per user; listed to satisfy the linter.
+  }, [isAuthenticated, user, refreshUnread])
+
+  const totalUnread = useMemo(
+    () => Object.values(unread).reduce((sum, n) => sum + (n || 0), 0),
+    [unread],
+  )
+
   const value = useMemo(
-    () => ({ openBooking, openChat, closeChat, unread, refreshUnread }),
-    [openBooking, openChat, closeChat, unread, refreshUnread],
+    () => ({ openBooking, openChat, closeChat, unread, totalUnread, refreshUnread }),
+    [openBooking, openChat, closeChat, unread, totalUnread, refreshUnread],
   )
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>

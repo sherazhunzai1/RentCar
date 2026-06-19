@@ -18,13 +18,11 @@ import { getBookingsByDriver } from '../services/bookingService'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
-import { useChat } from '../context/ChatContext'
 import ChatButton from '../components/ChatButton'
 import Seo from '../components/Seo'
 
 export default function DriverDashboard() {
   const { user } = useAuth()
-  const { refreshUnread } = useChat()
   const navigate = useNavigate()
   const [vehicles, setVehicles] = useState([])
   const [bookings, setBookings] = useState([])
@@ -37,12 +35,10 @@ export default function DriverDashboard() {
         setVehicles(v)
         setBookings(b)
         setLoading(false)
-        refreshUnread(b)
       },
     )
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(load, [user.id])
 
   const handleDelete = async (id) => {

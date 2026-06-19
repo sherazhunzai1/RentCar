@@ -14,24 +14,19 @@ import { getBookingsByUser, cancelBooking } from '../services/bookingService'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
-import { useChat } from '../context/ChatContext'
 import Seo from '../components/Seo'
 
 export default function MyBookings() {
   const { user } = useAuth()
-  const { refreshUnread } = useChat()
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [cancelling, setCancelling] = useState(null)
 
   useEffect(() => {
     getBookingsByUser(user.id)
-      .then((list) => {
-        setBookings(list)
-        refreshUnread(list)
-      })
+      .then(setBookings)
       .finally(() => setLoading(false))
-  }, [user.id, refreshUnread])
+  }, [user.id])
 
   const handleCancel = async (id) => {
     if (!window.confirm('Cancel this booking? Your seats will be released.')) return
