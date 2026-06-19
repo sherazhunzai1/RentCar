@@ -46,7 +46,6 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="container">
           <p>© {new Date().getFullYear()} gaadi.pk. All rights reserved.</p>
-          <p>Made in Pakistan 🇵🇰</p>
         </div>
       </div>
     </footer>
