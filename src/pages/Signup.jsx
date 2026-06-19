@@ -53,8 +53,8 @@ export default function Signup() {
   return (
     <div className="auth-page">
       <Seo
-        title="Sign Up — Become a Driver or Book Seats"
-        description="Create your gaadi.pk account to book seats as a passenger or post your vehicle on intercity routes across Pakistan."
+        title="Sign Up — Book Seats or Post Your Vehicle"
+        description="Create your gaadi.pk account to book seats to Gilgit-Baltistan, or post your vehicle on routes to Hunza, Gilgit, Skardu and Ghizer."
         path="/signup"
       />
       <div className="auth-card auth-card-wide">

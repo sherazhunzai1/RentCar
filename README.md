@@ -1,9 +1,10 @@
-# 🚗 gaadi.pk — Online Vehicle Booking Platform
+# 🚗 gaadi.pk — Seat & Vehicle Booking for Gilgit-Baltistan
 
-A complete **Vite + React** frontend for a rent-a-car / seat-booking application.
-Drivers sign up, create a profile, post their vehicle (Car, SUV, Van or Bus) on a
-city-to-city route, and accept online bookings. Passengers sign up, browse listings,
-pick exact seats from a live seat map, and pay online.
+A complete **Vite + React** frontend for booking seats and whole vehicles to
+**Gilgit-Baltistan** — Hunza, Gilgit, Skardu and Ghizer — from across GB and from
+cities like **Islamabad, Rawalpindi and Lahore**. Drivers post their vehicle
+(Car, SUV, Van or Bus) on a route and accept online bookings; passengers browse
+listings, pick exact seats from a live seat map, and pay online.
 
 > The frontend is wired to a **REST API backend** through the service layer in
 > `src/services/`. Configure the API base URL with `VITE_API_URL`

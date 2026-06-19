@@ -30,16 +30,18 @@
   <text x="100" y="320" font-family="'DejaVu Sans', Arial, sans-serif" font-size="76" font-weight="bold" fill="#ffffff">Apni seat, apni gaadi</text>
 
   <!-- Sub copy -->
-  <text x="100" y="392" font-family="'DejaVu Sans', Arial, sans-serif" font-size="38" fill="#dbeafe">Book your seat in cars, vans &amp; buses across Pakistan.</text>
+  <text x="100" y="392" font-family="'DejaVu Sans', Arial, sans-serif" font-size="38" fill="#dbeafe">Seats &amp; whole vehicles to Gilgit-Baltistan</text>
 
-  <!-- Feature chips -->
-  <g font-family="'DejaVu Sans', Arial, sans-serif" font-size="28" fill="#ffffff">
-    <rect x="100" y="446" width="232" height="60" rx="30" fill="#ffffff" opacity="0.14"/>
-    <text x="130" y="485">Pick your seat</text>
-    <rect x="352" y="446" width="250" height="60" rx="30" fill="#ffffff" opacity="0.14"/>
-    <text x="382" y="485">Compare routes</text>
-    <rect x="622" y="446" width="244" height="60" rx="30" fill="#ffffff" opacity="0.14"/>
-    <text x="652" y="485">Pay online</text>
+  <!-- Destination chips -->
+  <g font-family="'DejaVu Sans', Arial, sans-serif" font-size="28" font-weight="bold" fill="#ffffff">
+    <rect x="100" y="446" width="150" height="60" rx="30" fill="#ffffff" opacity="0.14"/>
+    <text x="130" y="485">Hunza</text>
+    <rect x="266" y="446" width="150" height="60" rx="30" fill="#ffffff" opacity="0.14"/>
+    <text x="296" y="485">Gilgit</text>
+    <rect x="432" y="446" width="160" height="60" rx="30" fill="#ffffff" opacity="0.14"/>
+    <text x="462" y="485">Skardu</text>
+    <rect x="608" y="446" width="162" height="60" rx="30" fill="#ffffff" opacity="0.14"/>
+    <text x="638" y="485">Ghizer</text>
   </g>
 
   <!-- Green road across bottom -->

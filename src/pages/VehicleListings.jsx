@@ -70,19 +70,19 @@ export default function VehicleListings() {
   const seoTitle =
     filters.fromCity && filters.toCity
       ? `${filters.fromCity} to ${filters.toCity} — Available Vehicles`
-      : 'Browse Vehicles & Book Seats Across Pakistan'
+      : 'Vehicles to Gilgit-Baltistan — Hunza, Gilgit, Skardu, Ghizer'
 
   return (
     <div className="listings">
       <Seo
         title={seoTitle}
-        description="Search available cars, SUVs, vans and buses by route and date. Compare prices, pick your seat and book online across Pakistan."
+        description="Search seats and whole vehicles to Gilgit-Baltistan by route and date — Hunza, Gilgit, Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore."
         path="/vehicles"
       />
       <div className="listings-hero">
         <div className="container">
-          <h1>Find your ride</h1>
-          <p>Search available vehicles and book your seat in seconds.</p>
+          <h1>Find your ride to the north</h1>
+          <p>Search seats and vehicles to Gilgit-Baltistan and from major Pakistani cities.</p>
           <SearchBar values={filters} onChange={setFilters} onSubmit={applySearch} variant="inline" />
         </div>
       </div>

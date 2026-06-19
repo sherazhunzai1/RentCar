@@ -10,9 +10,9 @@ import { useEffect } from 'react'
 export const SITE = {
   name: 'gaadi.pk',
   url: 'https://gaadi.pk',
-  defaultTitle: 'gaadi.pk — Book Your Seat, Travel All of Pakistan',
+  defaultTitle: 'gaadi.pk — Book Seats to Hunza, Gilgit, Skardu & Ghizer',
   defaultDescription:
-    'Book seats in cars, SUVs, vans and buses for intercity travel across Pakistan. Compare routes, pick your exact seat and pay online. Apni seat, apni gaadi.',
+    'Book seats and whole vehicles to Gilgit-Baltistan — Hunza, Gilgit, Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore. Pick your seat and pay online. Apni seat, apni gaadi.',
   image: 'https://gaadi.pk/og-image.png',
 }
 

@@ -46,14 +46,15 @@ export default function Home() {
       <section className="hero">
         <div className="container hero-inner">
           <div className="hero-copy">
-            <span className="hero-eyebrow">Apni seat, apni gaadi — your seat, your ride</span>
+            <span className="hero-eyebrow">Gilgit-Baltistan &amp; beyond — apni seat, apni gaadi</span>
             <h1>
-              Book your seat.<br />
-              <span className="accent">Travel all of Pakistan.</span>
+              Book your seat to<br />
+              <span className="accent">Hunza, Gilgit &amp; Skardu.</span>
             </h1>
             <p>
-              Find cars, SUVs, vans and buses heading your way — from Karachi to the north.
-              Compare routes, pick your seat, and pay online in a few taps.
+              Reserve seats or a whole vehicle to Gilgit-Baltistan — Hunza, Gilgit, Skardu and
+              Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore. Pick your seat
+              and pay online.
             </p>
             <div className="hero-actions">
               <Link to="/vehicles" className="btn btn-primary btn-lg">
@@ -69,11 +70,11 @@ export default function Home() {
           <div className="hero-stats">
             <div className="stat">
               <strong>20+</strong>
-              <span>Cities connected</span>
+              <span>Routes across GB</span>
             </div>
             <div className="stat">
               <strong>500+</strong>
-              <span>Trips weekly</span>
+              <span>Seats booked weekly</span>
             </div>
             <div className="stat">
               <strong>4.8★</strong>
@@ -92,7 +93,7 @@ export default function Home() {
         <div className="container">
           <div className="section-head">
             <h2>Choose your ride</h2>
-            <p>From quick city hops to long coach journeys, there's a vehicle for every trip.</p>
+            <p>From shared cars to full coaches for the long haul up to the mountains of GB.</p>
           </div>
           <div className="type-grid">
             {VEHICLE_TYPES.map((t) => {
@@ -136,7 +137,7 @@ export default function Home() {
               <div className="step-icon"><FaRoute /></div>
               <span className="step-num">2</span>
               <h3>Find your route</h3>
-              <p>Search by departure and destination city, then compare vehicles, times and prices.</p>
+              <p>Search GB routes — Hunza, Gilgit, Skardu, Ghizer — then compare vehicles, times and prices.</p>
             </div>
             <div className="step">
               <div className="step-icon"><FaChair /></div>
@@ -210,8 +211,8 @@ export default function Home() {
         <section className="cta-band">
           <div className="container cta-inner">
             <div>
-              <h2>Own a vehicle? Start earning on your route.</h2>
-              <p>List your car, van or bus, set your price, and accept online bookings today.</p>
+              <h2>Drive the GB routes? Start earning today.</h2>
+              <p>List your car, van or bus on routes to Hunza, Gilgit, Skardu and Ghizer, set your price, and accept online bookings.</p>
             </div>
             <Link to={isAuthenticated ? '/driver/post' : '/signup'} className="btn btn-light btn-lg">
               Post Your Vehicle

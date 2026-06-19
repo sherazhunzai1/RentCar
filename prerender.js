@@ -10,25 +10,25 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const SITE_URL = 'https://gaadi.pk'
-const DEFAULT_TITLE = 'gaadi.pk — Book Your Seat, Travel All of Pakistan'
+const DEFAULT_TITLE = 'gaadi.pk — Book Seats to Hunza, Gilgit, Skardu & Ghizer'
 const DEFAULT_DESC =
-  'gaadi.pk lets you book seats in cars, SUVs, vans and buses for intercity travel across Pakistan. Compare routes, pick your exact seat and pay online. Apni seat, apni gaadi.'
+  'gaadi.pk lets you book seats and whole vehicles to Gilgit-Baltistan — Hunza, Gilgit, Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore. Pick your seat and pay online. Apni seat, apni gaadi.'
 
 // Keep these in sync with each page's <Seo> props.
 const ROUTES = [
   { path: '/', title: null, description: DEFAULT_DESC, index: true },
   {
     path: '/vehicles',
-    title: 'Browse Vehicles & Book Seats Across Pakistan',
+    title: 'Vehicles to Gilgit-Baltistan — Hunza, Gilgit, Skardu, Ghizer',
     description:
-      'Search available cars, SUVs, vans and buses by route and date. Compare prices, pick your seat and book online across Pakistan.',
+      'Search seats and whole vehicles to Gilgit-Baltistan by route and date — Hunza, Gilgit, Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore.',
     index: true,
   },
   {
     path: '/signup',
-    title: 'Sign Up — Become a Driver or Book Seats',
+    title: 'Sign Up — Book Seats or Post Your Vehicle',
     description:
-      'Create your gaadi.pk account to book seats as a passenger or post your vehicle on intercity routes across Pakistan.',
+      'Create your gaadi.pk account to book seats to Gilgit-Baltistan, or post your vehicle on routes to Hunza, Gilgit, Skardu and Ghizer.',
     index: true,
   },
   { path: '/login', title: 'Login', description: DEFAULT_DESC, index: false },

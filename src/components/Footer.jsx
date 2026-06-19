@@ -11,8 +11,8 @@ export default function Footer() {
             <Logo />
           </Link>
           <p>
-            Apni seat, apni gaadi. Book your seat in cars, vans and buses across Pakistan —
-            connecting trusted drivers with passengers nationwide.
+            Apni seat, apni gaadi. Book seats and vehicles to Gilgit-Baltistan — Hunza, Gilgit,
+            Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore.
           </p>
           <div className="footer-social">
             <a href="#" aria-label="Facebook"><FaFacebookF /></a>

@@ -120,9 +120,9 @@ export function buildTripHtml(v, { siteUrl, ogImage } = {}) {
 export function buildFallbackHtml({ siteUrl, ogImage } = {}) {
   const url = `${siteUrl}/`
   const img = ogImage || `${siteUrl}/og-image.png`
-  const title = 'gaadi.pk — Book Your Seat, Travel All of Pakistan'
+  const title = 'gaadi.pk — Book Seats to Hunza, Gilgit, Skardu & Ghizer'
   const desc =
-    'Book seats in cars, vans and buses for intercity travel across Pakistan. Apni seat, apni gaadi.'
+    'Book seats and whole vehicles to Gilgit-Baltistan — Hunza, Gilgit, Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore. Apni seat, apni gaadi.'
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -141,6 +141,6 @@ export function buildFallbackHtml({ siteUrl, ogImage } = {}) {
 </head>
 <body><main style="font-family:system-ui,sans-serif;max-width:640px;margin:48px auto;padding:0 20px"><a href="${esc(
     url,
-  )}">gaadi.pk — book your seat across Pakistan →</a></main></body>
+  )}">gaadi.pk — book your seat to Gilgit-Baltistan →</a></main></body>
 </html>`
 }

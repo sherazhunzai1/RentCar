@@ -2,24 +2,22 @@
 // (see useLocations); this static list is only used if that request fails so
 // the route dropdowns are never empty.
 export const CITIES = [
-  'Karachi',
-  'Lahore',
+  // Gilgit-Baltistan
+  'Gilgit',
+  'Hunza',
+  'Skardu',
+  'Ghizer',
+  'Nagar',
+  'Astore',
+  'Chilas',
+  'Khaplu',
+  'Gahkuch',
+  // Major cities & transit points
   'Islamabad',
   'Rawalpindi',
-  'Faisalabad',
-  'Multan',
-  'Peshawar',
-  'Quetta',
-  'Hyderabad',
-  'Sialkot',
-  'Gujranwala',
-  'Bahawalpur',
-  'Sargodha',
-  'Sukkur',
+  'Lahore',
   'Abbottabad',
-  'Murree',
-  'Swat',
-  'Gilgit',
-  'Skardu',
+  'Mansehra',
+  'Besham',
   'Naran',
 ]

@@ -23,8 +23,9 @@ the frontend works without modification.
 - Provide a `package.json`, `.env.example`, and a README with run instructions
 
 ## 2. Product overview
-gaadi.pk connects **drivers** who post vehicles on intercity routes with
-**passengers** who book individual seats and pay online.
+gaadi.pk connects **drivers** who post vehicles on routes to Gilgit-Baltistan
+(Hunza, Gilgit, Skardu, Ghizer) — from across GB and from cities like Islamabad,
+Rawalpindi and Lahore — with **passengers** who book individual seats and pay online.
 
 There are two user roles:
 - **Driver** — signs up, creates a profile, posts vehicles (Car / SUV / Van / Bus)
@@ -213,9 +214,9 @@ seats from the vehicle's `bookedSeats`.
 - **Vehicle types:** `car`, `suv`, `van`, `bus`
 - **Amenities:** Air Conditioning, WiFi, Charging Port, Reclining Seats, Water
   Bottle, Music System, Luggage Space, Reading Light
-- **Cities:** Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar,
-  Quetta, Hyderabad, Sialkot, Gujranwala, Bahawalpur, Sargodha, Sukkur, Abbottabad,
-  Murree, Swat, Gilgit, Skardu, Naran
+- **Locations** (Gilgit-Baltistan + major cities/transit): Gilgit, Hunza, Skardu,
+  Ghizer, Nagar, Astore, Chilas, Khaplu, Gahkuch, Islamabad, Rawalpindi, Lahore,
+  Abbottabad, Mansehra, Besham, Naran
 
 ## 10. Frontend integration notes
 - The frontend already has a service layer with these calls:
