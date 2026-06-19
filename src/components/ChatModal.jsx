@@ -34,6 +34,7 @@ function ChatPanel({ booking, onClose, connected }) {
   const typingTimer = useRef(null)
   const typingSent = useRef(false)
   const messagesRef = useRef([])
+  const otherTypingTimer = useRef(null)
 
   // Keep a ref of the latest messages for the reconnect "fetch since last" sync.
   useEffect(() => {
@@ -100,7 +101,15 @@ function ChatPanel({ booking, onClose, connected }) {
     }
     const onTyping = (e) => {
       if (!e || e.bookingId !== bookingId || e.userId === user.id) return
-      setOtherTyping(!!e.isTyping)
+      if (e.isTyping) {
+        setOtherTyping(true)
+        // Safety auto-hide in case the "stopped typing" event is missed.
+        clearTimeout(otherTypingTimer.current)
+        otherTypingTimer.current = setTimeout(() => setOtherTyping(false), 4000)
+      } else {
+        clearTimeout(otherTypingTimer.current)
+        setOtherTyping(false)
+      }
     }
     const onRead = (e) => {
       if (!e || e.bookingId !== bookingId || e.readerId === user.id) return
@@ -122,6 +131,7 @@ function ChatPanel({ booking, onClose, connected }) {
       socket.off('chat:typing', onTyping)
       socket.off('chat:read', onRead)
       clearTimeout(typingTimer.current)
+      clearTimeout(otherTypingTimer.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingId])
@@ -237,7 +247,15 @@ function ChatPanel({ booking, onClose, connected }) {
               )
             })
           )}
-          {otherTyping && <div className="chat-typing">{otherName} is typing…</div>}
+          {otherTyping && (
+            <div className="chat-msg theirs" aria-label={`${otherName} is typing`}>
+              <div className="chat-bubble chat-typing-bubble">
+                <span className="typing-dot" />
+                <span className="typing-dot" />
+                <span className="typing-dot" />
+              </div>
+            </div>
+          )}
         </div>
 
         {closed ? (
