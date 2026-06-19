@@ -68,15 +68,16 @@ export default function SeatMap({
   return (
     <div className="seatmap">
       <div className="seatmap-cabin">
-        {/* Front row: driver + front passenger seat(s) */}
+        {/* Front row: front passenger seat(s) on the left, driver on the RIGHT
+            (Pakistan drives on the left → right-hand-drive vehicles). */}
         <div className="seat-row seat-row-front">
+          {frontSeatNums.map((seat) => renderSeat(seat))}
           {hasDriver && (
             <span className="seat-driver" title="Driver — not for booking" aria-hidden="true">
               <GiSteeringWheel />
               <span className="seat-driver-text">Driver</span>
             </span>
           )}
-          {frontSeatNums.map((seat) => renderSeat(seat))}
         </div>
 
         {/* Remaining rows */}
