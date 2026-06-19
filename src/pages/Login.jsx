@@ -32,8 +32,6 @@ export default function Login() {
     }
   }
 
-  const fillDemo = (email) => setForm({ email, password: 'password' })
-
   return (
     <div className="auth-page">
       <Seo title="Login" path="/login" noindex />
@@ -78,19 +76,6 @@ export default function Login() {
             {submitting ? 'Logging in…' : (<><FaSignInAlt /> Log In</>)}
           </button>
         </form>
-
-        <div className="demo-box">
-          <p>Try a demo driver account:</p>
-          <div className="demo-actions">
-            <button type="button" className="chip" onClick={() => fillDemo('ahmed@driver.com')}>
-              ahmed@driver.com
-            </button>
-            <button type="button" className="chip" onClick={() => fillDemo('sara@driver.com')}>
-              sara@driver.com
-            </button>
-          </div>
-          <small>Password for both: <code>password</code></small>
-        </div>
 
         <p className="auth-foot">
           Don&apos;t have an account? <Link to="/signup">Sign up</Link>

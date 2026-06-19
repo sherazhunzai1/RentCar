@@ -1768,49 +1768,6 @@ button {
 .role-option.active svg {
   color: var(--primary);
 }
-.demo-box {
-  margin-top: 22px;
-  padding: 16px;
-  background: var(--bg-2);
-  border-radius: var(--radius-sm);
-  text-align: center;
-}
-.demo-box p {
-  font-size: 0.85rem;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-.demo-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
-.chip {
-  background: #fff;
-  border: 1px solid var(--line-2);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 0.82rem;
-  color: var(--ink-2);
-  transition: all 0.15s;
-}
-.chip:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-.demo-box small {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-.demo-box code {
-  background: #fff;
-  padding: 1px 6px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
-}
-
 /* ============================================================
    Dashboard (driver + my bookings)
    ============================================================ */
