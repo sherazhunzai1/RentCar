@@ -2,8 +2,9 @@
 // Endpoints: POST /auth/signup, POST /auth/login, GET /auth/me, PATCH /users/:id
 import { api, asEntity, tokenStore } from './apiClient'
 
-export async function signup({ name, email, password, role, phone, licenseNumber, experience }) {
+export async function signup({ name, email, password, role, phone, gender, licenseNumber, experience }) {
   const body = { name, email, password, role, phone }
+  if (gender) body.gender = gender
   if (role === 'driver') {
     body.licenseNumber = licenseNumber
     body.experience = Number(experience) || 0

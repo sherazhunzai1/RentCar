@@ -207,6 +207,7 @@ export default function VehicleDetails() {
                     bookedSeats={vehicle.bookedSeats}
                     selectedSeats={wholeVehicle ? [] : selected}
                     frontSeats={frontSeats}
+                    seatGenders={vehicle.seatGenders || {}}
                     onToggle={toggleSeat}
                     layout={type.seatLayout}
                     maxSelectable={available}

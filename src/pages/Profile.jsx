@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaUserCircle, FaCar, FaUserCheck, FaSignOutAlt } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
+import { GENDERS } from '../data/constants'
 import { formatDate } from '../utils/format'
 import Seo from '../components/Seo'
 
@@ -11,6 +12,7 @@ export default function Profile() {
   const [form, setForm] = useState({
     name: user.name,
     phone: user.phone || '',
+    gender: user.gender || '',
     licenseNumber: user.licenseNumber || '',
     experience: user.experience || '',
   })
@@ -29,7 +31,7 @@ export default function Profile() {
       await updateProfile(
         isDriver
           ? { name: form.name, phone: form.phone, licenseNumber: form.licenseNumber, experience: Number(form.experience) }
-          : { name: form.name, phone: form.phone },
+          : { name: form.name, phone: form.phone, gender: form.gender },
       )
       setSaved(true)
     } finally {
@@ -82,10 +84,29 @@ export default function Profile() {
               <label>Phone</label>
               <input type="tel" value={form.phone} onChange={set('phone')} placeholder="+92 300 0000000" />
             </div>
-            {isDriver && (
+            {isDriver ? (
               <div className="field">
                 <label>License number</label>
                 <input type="text" value={form.licenseNumber} onChange={set('licenseNumber')} />
+              </div>
+            ) : (
+              <div className="field">
+                <label>Gender</label>
+                <div className="gender-toggle">
+                  {GENDERS.map((g) => (
+                    <button
+                      type="button"
+                      key={g.id}
+                      className={`gender-option ${form.gender === g.id ? 'active' : ''}`}
+                      onClick={() => {
+                        setForm({ ...form, gender: g.id })
+                        setSaved(false)
+                      }}
+                    >
+                      {g.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>

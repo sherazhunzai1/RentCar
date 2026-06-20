@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaUser, FaEnvelope, FaLock, FaPhone, FaIdCard, FaCar, FaUserCheck } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
-import { USER_ROLES } from '../data/constants'
+import { USER_ROLES, GENDERS } from '../data/constants'
 import Seo from '../components/Seo'
 
 export default function Signup() {
@@ -16,6 +16,7 @@ export default function Signup() {
     password: '',
     confirm: '',
     phone: '',
+    gender: '',
     licenseNumber: '',
     experience: '',
   })
@@ -34,6 +35,10 @@ export default function Signup() {
     }
     if (form.password !== form.confirm) {
       setError('Passwords do not match.')
+      return
+    }
+    if (!isDriver && !form.gender) {
+      setError('Please select your gender.')
       return
     }
 
@@ -129,6 +134,28 @@ export default function Signup() {
               </div>
             </div>
           </div>
+
+          {!isDriver && (
+            <div className="field">
+              <label>Gender</label>
+              <div className="gender-toggle">
+                {GENDERS.map((g) => (
+                  <button
+                    type="button"
+                    key={g.id}
+                    className={`gender-option ${form.gender === g.id ? 'active' : ''}`}
+                    onClick={() => setForm({ ...form, gender: g.id })}
+                  >
+                    {g.label}
+                  </button>
+                ))}
+              </div>
+              <small className="field-hint">
+                Shown on the seat map so passengers can choose with awareness — you can still book
+                any available seat.
+              </small>
+            </div>
+          )}
 
           {isDriver && (
             <div className="form-row driver-fields">

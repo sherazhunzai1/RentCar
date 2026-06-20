@@ -66,6 +66,13 @@ export const USER_ROLES = {
   PASSENGER: 'passenger',
 }
 
+// Passenger gender — collected at signup so booked seats can be labelled on the
+// seat map (awareness only; it never restricts who can book a seat).
+export const GENDERS = [
+  { id: 'male', label: 'Male' },
+  { id: 'female', label: 'Female' },
+]
+
 export const BOOKING_STATUS = {
   CONFIRMED: 'confirmed',
   CANCELLED: 'cancelled',

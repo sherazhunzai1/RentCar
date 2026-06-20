@@ -2430,6 +2430,70 @@ a.contact-card:hover {
   background: #fff;
 }
 
+/* Gender awareness on booked seats (informational only) */
+.seat-booked.seat-female {
+  background: #fdf2f8;
+  border-color: #f9a8d4;
+  color: #ec4899;
+}
+.seat-booked.seat-male {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #3b82f6;
+}
+.seat-gender {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  min-width: 13px;
+  height: 13px;
+  padding: 0 2px;
+  border-radius: 4px;
+  font-size: 0.5rem;
+  font-weight: 800;
+  line-height: 13px;
+  text-align: center;
+  color: #fff;
+}
+.seat-gender.female {
+  background: #db2777;
+}
+.seat-gender.male {
+  background: #2563eb;
+}
+.legend-box.female {
+  background: #fdf2f8;
+  border-color: #f9a8d4;
+}
+.legend-box.male {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+/* Gender selector (signup / profile) */
+.gender-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.gender-option {
+  padding: 11px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  font-weight: 600;
+  color: var(--ink-2);
+  transition: all 0.15s;
+}
+.gender-option:hover {
+  border-color: var(--primary-light);
+}
+.gender-option.active {
+  border-color: var(--primary);
+  background: var(--primary-50);
+  color: var(--primary-dark);
+}
+
 /* Per-seat pricing legend (vehicle details) */
 .price-legend {
   display: flex;

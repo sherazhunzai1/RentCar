@@ -6,11 +6,14 @@ import { GiSteeringWheel } from 'react-icons/gi'
 //     beside them — so seat 1 sits next to the driver
 //   - the remaining seats fill rows of `cols`, with an optional aisle gap
 // Booked seats are disabled; front-priced seats (in `frontSeats`) get an "F".
+// `seatGenders` ({ "2": "female", … }) labels booked seats by the booker's
+// gender — awareness only; it never restricts who can pick an available seat.
 export default function SeatMap({
   totalSeats,
   bookedSeats = [],
   selectedSeats = [],
   frontSeats = [],
+  seatGenders = {},
   onToggle,
   layout = { hasDriver: true, frontRow: 1, cols: 4 },
   maxSelectable = Infinity,
@@ -20,6 +23,9 @@ export default function SeatMap({
   const hasDriver = layout.hasDriver ?? true
   const aisleAfter = layout.aisleAfter
   const hasFront = frontSeats.length > 0
+  const genderValues = Object.values(seatGenders)
+  const hasFemale = genderValues.includes('female')
+  const hasMale = genderValues.includes('male')
 
   const seatState = (seat) => {
     if (bookedSeats.includes(seat)) return 'booked'
@@ -35,20 +41,31 @@ export default function SeatMap({
 
   const renderSeat = (seat) => {
     const state = seatState(seat)
+    const booked = state === 'booked'
     const isFront = frontSeats.includes(seat)
+    // Gender label only applies to a booked seat (the booker's gender).
+    const gender = booked ? seatGenders[String(seat)] : null
+    const className = ['seat', `seat-${state}`, !booked && isFront ? 'seat-front' : '', gender ? `seat-${gender}` : '']
+      .filter(Boolean)
+      .join(' ')
+    const label = booked
+      ? `Seat ${seat} — booked${gender ? ` by a ${gender} passenger` : ''}`
+      : `Seat ${seat}${isFront ? ' (front)' : ''} — ${state}`
     return (
       <button
         type="button"
         key={seat}
-        className={`seat seat-${state}${isFront ? ' seat-front' : ''}`}
+        className={className}
         onClick={() => handleClick(seat, state)}
-        disabled={state === 'booked'}
-        aria-label={`Seat ${seat} ${isFront ? 'front ' : ''}${state}`}
-        title={`Seat ${seat}${isFront ? ' (front)' : ''} — ${state}`}
+        disabled={booked}
+        aria-label={label}
+        title={label}
       >
         <FaChair />
         <span className="seat-num">{seat}</span>
-        {isFront && <span className="seat-badge">F</span>}
+        {!booked && isFront && <span className="seat-badge">F</span>}
+        {gender === 'female' && <span className="seat-gender female" aria-hidden="true">F</span>}
+        {gender === 'male' && <span className="seat-gender male" aria-hidden="true">M</span>}
       </button>
     )
   }
@@ -100,6 +117,8 @@ export default function SeatMap({
         <span><i className="legend-box selected" /> Selected</span>
         <span><i className="legend-box booked" /> Booked</span>
         {hasFront && <span><i className="legend-box front" /> Front</span>}
+        {hasFemale && <span><i className="legend-box female" /> Female</span>}
+        {hasMale && <span><i className="legend-box male" /> Male</span>}
       </div>
     </div>
   )
