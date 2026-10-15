@@ -47,7 +47,7 @@ const ROUTES = [
   },
   {
     path: '/terms',
-    title: 'Terms of Service',
+    title: 'Terms & Conditions',
     description:
       'The terms that govern using gaadi.pk to book seats and vehicles to and from Gilgit-Baltistan, and to list vehicles as a driver.',
     index: true,
@@ -57,6 +57,20 @@ const ROUTES = [
     title: 'Privacy Policy',
     description:
       'How gaadi.pk collects, uses and protects your personal information when you book seats, list vehicles and message through the platform.',
+    index: true,
+  },
+  {
+    path: '/refund-policy',
+    title: 'Return & Refund Policy',
+    description:
+      'How cancellations, returns and refunds work for seat and vehicle bookings on gaadi.pk.',
+    index: true,
+  },
+  {
+    path: '/service-policy',
+    title: 'Shipping & Service Policy',
+    description:
+      'How gaadi.pk delivers its booking service — no physical shipping; digital reservations for seats and vehicles across Gilgit-Baltistan.',
     index: true,
   },
   { path: '/login', title: 'Login', description: DEFAULT_DESC, index: false },

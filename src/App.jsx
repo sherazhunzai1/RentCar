@@ -13,6 +13,8 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
+import RefundPolicy from './pages/RefundPolicy'
+import ServicePolicy from './pages/ServicePolicy'
 import VehicleListings from './pages/VehicleListings'
 import VehicleDetails from './pages/VehicleDetails'
 import Booking from './pages/Booking'
@@ -39,6 +41,8 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/service-policy" element={<ServicePolicy />} />
           <Route path="/vehicles" element={<VehicleListings />} />
           <Route path="/vehicles/:id" element={<VehicleDetails />} />
 

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa'
 import Logo from './Logo'
+import { COMPANY } from '../data/company'
 
 export default function Footer() {
   return (
@@ -13,6 +14,13 @@ export default function Footer() {
           <p>
             Apni seat, apni gaadi. Book seats and vehicles to Gilgit-Baltistan — Hunza, Gilgit,
             Skardu and Ghizer — from across GB and from Islamabad, Rawalpindi and Lahore.
+          </p>
+          <p className="footer-office">
+            {COMPANY.officeAddress}
+            <br />
+            <a href={`tel:+${COMPANY.phoneDigits}`}>{COMPANY.phoneDisplay}</a>
+            {' · '}
+            <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
           </p>
           <div className="footer-social">
             <a href="#" aria-label="Facebook"><FaFacebookF /></a>
@@ -37,9 +45,11 @@ export default function Footer() {
         </div>
 
         <div className="footer-col">
-          <h4>Support</h4>
-          <Link to="/terms">Terms of Service</Link>
+          <h4>Policies</h4>
+          <Link to="/terms">Terms &amp; Conditions</Link>
           <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/refund-policy">Return &amp; Refund Policy</Link>
+          <Link to="/service-policy">Shipping &amp; Service Policy</Link>
         </div>
       </div>
 

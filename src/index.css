@@ -494,6 +494,19 @@ button {
   max-width: 320px;
   font-size: 0.92rem;
 }
+.footer-office {
+  margin: 0 0 16px;
+  max-width: 320px;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #94a3b8;
+}
+.footer-office a {
+  color: #cbd5e1;
+}
+.footer-office a:hover {
+  color: #fff;
+}
 .footer-social {
   display: flex;
   gap: 12px;
@@ -1676,6 +1689,10 @@ button {
 .status-pill.confirmed {
   background: var(--success-bg);
   color: #166534;
+}
+.status-pill.pending {
+  background: #fef3c7;
+  color: #92400e;
 }
 .status-pill.cancelled {
   background: var(--danger-bg);

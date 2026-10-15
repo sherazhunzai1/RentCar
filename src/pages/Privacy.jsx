@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Seo from '../components/Seo'
+import { COMPANY } from '../data/company'
 
 export default function Privacy() {
   return (
@@ -12,7 +13,7 @@ export default function Privacy() {
 
       <div className="page-title-block">
         <h1>Privacy Policy</h1>
-        <p className="legal-updated">Last updated: 19 June 2026</p>
+        <p className="legal-updated">Last updated: 15 October 2026</p>
       </div>
 
       <div className="legal-prose">
@@ -40,8 +41,9 @@ export default function Privacy() {
           </li>
           <li>
             <strong>Payment information:</strong> payments are processed by third-party payment
-            providers (such as JazzCash). We receive confirmation of a payment and store booking and
-            transaction references, but we do not store your full card or wallet credentials.
+            providers (such as JazzCash or card gateways). We receive confirmation of a payment and
+            store booking and transaction references, but we do not store your full card or wallet
+            credentials.
           </li>
           <li>
             <strong>Messages:</strong> messages you send to the other party through the in-app chat
@@ -74,7 +76,7 @@ export default function Privacy() {
           </li>
           <li>
             <strong>Payment providers:</strong> we share the information required to process your
-            payment with providers such as JazzCash.
+            payment with our payment partners.
           </li>
           <li>
             <strong>Service providers:</strong> trusted companies that help us run the Platform (for
@@ -116,7 +118,9 @@ export default function Privacy() {
           <li>You can view and update most of your account details from your profile at any time.</li>
           <li>
             You can request access to, correction of, or deletion of your personal information by
-            emailing us at <a href="mailto:contact@gaadi.pk">contact@gaadi.pk</a>.
+            emailing us at{' '}
+            <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> or calling{' '}
+            <a href={`tel:+${COMPANY.phoneDigits}`}>{COMPANY.phoneDisplay}</a>.
           </li>
           <li>
             You can stop using the Platform at any time; ask us to close your account and we will
@@ -140,10 +144,19 @@ export default function Privacy() {
 
         <h2>10. Contact us</h2>
         <p>
-          Questions about your privacy or this policy? Email us at{' '}
-          <a href="mailto:contact@gaadi.pk">contact@gaadi.pk</a> or visit our{' '}
-          <Link to="/contact">Contact</Link> page. You can also read our{' '}
-          <Link to="/terms">Terms of Service</Link>.
+          Questions about your privacy or this policy? Email{' '}
+          <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>, call{' '}
+          <a href={`tel:+${COMPANY.phoneDigits}`}>{COMPANY.phoneDisplay}</a>, or visit our{' '}
+          <Link to="/contact">Contact</Link> page.
+        </p>
+        <p>
+          <strong>Local office:</strong> {COMPANY.officeAddress}, {COMPANY.officeCountry}
+        </p>
+        <p>
+          Related:{' '}
+          <Link to="/terms">Terms of Service</Link> ·{' '}
+          <Link to="/refund-policy">Return &amp; Refund Policy</Link> ·{' '}
+          <Link to="/service-policy">Shipping &amp; Service Policy</Link>
         </p>
       </div>
     </div>

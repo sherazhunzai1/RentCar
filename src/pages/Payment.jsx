@@ -3,9 +3,8 @@ import { Navigate, useNavigate, Link } from 'react-router-dom'
 import {
   FaArrowLeft,
   FaLock,
-  FaRegCreditCard,
   FaMoneyBillWave,
-  FaMobileAlt,
+  FaShieldAlt,
   FaCheckCircle,
 } from 'react-icons/fa'
 import Stepper from '../components/Stepper'
@@ -16,8 +15,7 @@ import { computePricing } from '../utils/pricing'
 import Seo from '../components/Seo'
 
 const METHODS = [
-  { id: 'jazzcash', label: 'JazzCash', icon: FaMobileAlt },
-  { id: 'card', label: 'Credit / Debit Card', icon: FaRegCreditCard },
+  { id: 'safepay', label: 'Safepay (Card / Online)', icon: FaShieldAlt },
   { id: 'cash', label: 'Cash on Boarding', icon: FaMoneyBillWave },
 ]
 
@@ -25,8 +23,7 @@ export default function Payment() {
   const { draft, clearBooking } = useBooking()
   const navigate = useNavigate()
 
-  const [method, setMethod] = useState('jazzcash')
-  const [card, setCard] = useState({ name: '', number: '', expiry: '', cvv: '' })
+  const [method, setMethod] = useState('safepay')
   const [error, setError] = useState('')
   const [processing, setProcessing] = useState(false)
 
@@ -37,17 +34,6 @@ export default function Payment() {
   const { vehicle, seats, bookWholeVehicle } = draft
   const { subtotal, serviceFee, total } = computePricing(vehicle, { seats, bookWholeVehicle })
 
-  // Light formatting so the demo card input feels real.
-  const onCardNumber = (e) => {
-    const digits = e.target.value.replace(/\D/g, '').slice(0, 16)
-    setCard({ ...card, number: digits.replace(/(.{4})/g, '$1 ').trim() })
-  }
-  const onExpiry = (e) => {
-    const digits = e.target.value.replace(/\D/g, '').slice(0, 4)
-    setCard({ ...card, expiry: digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits })
-  }
-  const onCvv = (e) => setCard({ ...card, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })
-
   const handlePay = async (e) => {
     e.preventDefault()
     setError('')
@@ -57,19 +43,17 @@ export default function Payment() {
         vehicle,
         seats,
         bookWholeVehicle,
-        payment: { method, ...card },
+        payment: { method },
       })
 
-      // Gateway-hosted payment (e.g. JazzCash): the backend returns a payment
-      // object with a redirectUrl. Hand the browser off to the provider; it
-      // will return us to /payment/return after the transaction.
+      // Hosted gateway (Safepay / JazzCash): backend returns payment.redirectUrl.
       if (booking?.payment?.redirectUrl) {
         clearBooking()
         window.location.href = booking.payment.redirectUrl
         return
       }
 
-      // Methods that settle immediately (card / cash): booking is confirmed.
+      // Methods that settle immediately (e.g. cash): booking is confirmed.
       clearBooking()
       navigate(`/booking/confirmation/${booking.id}`, { replace: true })
     } catch (err) {
@@ -81,9 +65,7 @@ export default function Payment() {
   const payLabel =
     method === 'cash'
       ? 'Reserve Seats'
-      : method === 'jazzcash'
-        ? `Pay ${formatCurrency(total)} with JazzCash`
-        : `Pay ${formatCurrency(total)}`
+      : `Pay ${formatCurrency(total)} with Safepay`
 
   return (
     <div className="container narrow checkout">
@@ -95,7 +77,6 @@ export default function Payment() {
 
       <div className="checkout-grid">
         <form className="checkout-main" onSubmit={handlePay}>
-          {/* Method picker */}
           <div className="card">
             <h3 className="card-section-title">Payment method</h3>
             <div className="method-grid">
@@ -117,60 +98,37 @@ export default function Payment() {
             </div>
           </div>
 
-          {/* JazzCash — redirect flow */}
-          {method === 'jazzcash' && (
+          {method === 'safepay' && (
             <div className="card">
-              <h3 className="card-section-title">Pay with JazzCash</h3>
+              <h3 className="card-section-title">Pay with Safepay</h3>
               <p className="muted-note">
-                You&apos;ll be securely redirected to JazzCash to authorize{' '}
+                You&apos;ll be securely redirected to Safepay to authorize{' '}
                 <strong>{formatCurrency(total)}</strong>. After paying, you&apos;ll return here
-                automatically and your booking will be confirmed.
+                automatically and your booking will be confirmed. Card details never touch gaadi.pk.
               </p>
+              {(import.meta.env.DEV || import.meta.env.VITE_SAFEPAY_SHOW_TEST_CARDS === 'true') && (
+                <div className="alert" style={{ marginTop: 12 }}>
+                  <strong>Sandbox only — avoid PAYER_AUTH_ENROLLMENT failures</strong>
+                  <p className="muted-note" style={{ margin: '8px 0 0' }}>
+                    Use Safepay&apos;s official dummy card (not Stripe/Google test cards):
+                  </p>
+                  <ul className="muted-note" style={{ margin: '8px 0 0', paddingLeft: 18 }}>
+                    <li>Mastercard: <code>5200 0000 0000 1096</code></li>
+                    <li>Or Visa: <code>4456 5300 0000 1096</code></li>
+                    <li>Expiry must be <code>03/28</code> · CVC <code>111</code></li>
+                    <li>Name: Abdul Qudoos · Country: Pakistan · City: Karachi</li>
+                    <li>Phone: <code>+92 302 1111111</code> · use a fresh email if card was overused</li>
+                  </ul>
+                  <p className="muted-note" style={{ margin: '8px 0 0' }}>
+                    After Pay, Safepay opens a <strong>3D Secure emulator</strong>. Choose a
+                    <strong> successful / authenticated (Y)</strong> result — canceling or picking
+                    failure causes exactly this enrollment error. Same dummy card ≈ 7–8 uses/day.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Card form */}
-          {method === 'card' && (
-            <div className="card">
-              <h3 className="card-section-title">Card details</h3>
-              <div className="field">
-                <label>Cardholder name</label>
-                <input
-                  type="text"
-                  placeholder="Name on card"
-                  value={card.name}
-                  onChange={(e) => setCard({ ...card, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="field">
-                <label>Card number</label>
-                <div className="input-icon">
-                  <FaRegCreditCard />
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="0000 0000 0000 0000"
-                    value={card.number}
-                    onChange={onCardNumber}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="field">
-                  <label>Expiry</label>
-                  <input type="text" placeholder="MM/YY" value={card.expiry} onChange={onExpiry} required />
-                </div>
-                <div className="field">
-                  <label>CVV</label>
-                  <input type="password" placeholder="123" value={card.cvv} onChange={onCvv} required />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Cash on boarding */}
           {method === 'cash' && (
             <div className="card">
               <p className="muted-note">
@@ -182,9 +140,9 @@ export default function Payment() {
 
           <p className="secure-note">
             <FaLock />{' '}
-            {method === 'jazzcash'
-              ? 'You will complete payment securely on JazzCash.'
-              : 'Card & cash options are simulated for this demo.'}
+            {method === 'safepay'
+              ? 'You will complete payment securely on Safepay.'
+              : 'Your seats are reserved; pay the driver when you board.'}
           </p>
         </form>
 

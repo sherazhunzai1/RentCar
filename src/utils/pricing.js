@@ -2,10 +2,10 @@
 //   - a front seat (in vehicle.frontSeats) costs frontSeatPrice when that is set,
 //     otherwise the normal pricePerSeat
 //   - whole-vehicle booking = flat wholeVehiclePrice for every seat
-//   - serviceFee = 3% of subtotal (rounded); total = subtotal + serviceFee
+//   - serviceFee = 5% of subtotal (rounded); total = subtotal + serviceFee
 // The backend is authoritative on a created booking; this is for the live UI.
 
-export const SERVICE_FEE_RATE = 0.03
+export const SERVICE_FEE_RATE = 0.05
 
 export function isFrontSeat(vehicle, seat) {
   return Array.isArray(vehicle?.frontSeats) && vehicle.frontSeats.includes(seat)

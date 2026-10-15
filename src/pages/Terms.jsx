@@ -1,18 +1,19 @@
 import { Link } from 'react-router-dom'
 import Seo from '../components/Seo'
+import { COMPANY } from '../data/company'
 
 export default function Terms() {
   return (
     <div className="container narrow section legal-page">
       <Seo
-        title="Terms of Service"
+        title="Terms & Conditions"
         description="The terms that govern using gaadi.pk to book seats and vehicles to and from Gilgit-Baltistan, and to list vehicles as a driver."
         path="/terms"
       />
 
       <div className="page-title-block">
-        <h1>Terms of Service</h1>
-        <p className="legal-updated">Last updated: 19 June 2026</p>
+        <h1>Terms &amp; Conditions</h1>
+        <p className="legal-updated">Last updated: 15 October 2026</p>
       </div>
 
       <div className="legal-prose">
@@ -60,8 +61,10 @@ export default function Terms() {
             details.
           </li>
           <li>
-            Notify us immediately at <a href="mailto:contact@gaadi.pk">contact@gaadi.pk</a> if you
-            suspect any unauthorised use of your account.
+            Notify us immediately at{' '}
+            <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> or{' '}
+            <a href={`tel:+${COMPANY.phoneDigits}`}>{COMPANY.phoneDisplay}</a> if you suspect any
+            unauthorised use of your account.
           </li>
         </ul>
 
@@ -116,12 +119,12 @@ export default function Terms() {
         <h2>6. Payments and fees</h2>
         <ul>
           <li>
-            Payments can be made through the methods offered on the Platform, including JazzCash,
-            card, mobile wallet, or cash on boarding.
+            Payments can be made through the methods offered on the Platform, including card,
+            mobile wallet, payment gateways, or cash on boarding.
           </li>
           <li>
-            For online payments such as JazzCash, you may be redirected to the payment provider to
-            complete the transaction; your booking is confirmed once the payment succeeds.
+            For online payments you may be redirected to the payment provider to complete the
+            transaction; your booking is confirmed once the payment succeeds.
           </li>
           <li>
             The total you pay includes the driver&apos;s fare plus the gaadi.pk service fee. Fares
@@ -140,8 +143,10 @@ export default function Terms() {
             seats back to the vehicle.
           </li>
           <li>
-            Refund eligibility for online payments depends on when you cancel and the payment
-            provider&apos;s process. Cash-on-boarding bookings are simply released.
+            Refund eligibility, timelines and how to request a refund are set out in our{' '}
+            <Link to="/refund-policy">Return &amp; Refund Policy</Link>. How the booking service is
+            delivered (with no physical shipping) is described in our{' '}
+            <Link to="/service-policy">Shipping &amp; Service Policy</Link>.
           </li>
           <li>
             We may cancel a booking if a trip cannot go ahead (for example, the driver cancels or the
@@ -176,7 +181,9 @@ export default function Terms() {
           Your safety matters to us, but you are responsible for using your own judgement when
           travelling. Passengers should confirm vehicle and driver details before boarding; drivers
           should ensure their vehicle is safe and that they drive responsibly and within the law.
-          Report any safety concern to us at <a href="mailto:contact@gaadi.pk">contact@gaadi.pk</a>.
+          Report any safety concern to us at{' '}
+          <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> or{' '}
+          <a href={`tel:+${COMPANY.phoneDigits}`}>{COMPANY.phoneDisplay}</a>.
         </p>
 
         <h2>11. Our role and liability</h2>
@@ -225,9 +232,13 @@ export default function Terms() {
 
         <h2>16. Contact us</h2>
         <p>
-          Questions about these Terms? Email us at{' '}
-          <a href="mailto:contact@gaadi.pk">contact@gaadi.pk</a> or visit our{' '}
+          Questions about these Terms? Email{' '}
+          <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>, call{' '}
+          <a href={`tel:+${COMPANY.phoneDigits}`}>{COMPANY.phoneDisplay}</a>, or visit our{' '}
           <Link to="/contact">Contact</Link> page.
+        </p>
+        <p>
+          <strong>Local office:</strong> {COMPANY.officeAddress}, {COMPANY.officeCountry}
         </p>
       </div>
     </div>

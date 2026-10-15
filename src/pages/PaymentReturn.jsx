@@ -4,10 +4,13 @@ import { FaTimesCircle, FaRedo, FaListUl } from 'react-icons/fa'
 import { getBookingById } from '../services/bookingService'
 import Seo from '../components/Seo'
 
-// Landing page the payment gateway (JazzCash) redirects the browser back to:
-//   CLIENT_ORIGIN + CLIENT_PAYMENT_RETURN_PATH?bookingId=…&status=success|failed&ref=…
-// On success we hand off to the normal confirmation screen; on failure we show
-// a retry screen. The booking fetched from the backend is the source of truth.
+const POLL_MS = 1500
+const MAX_POLLS = 8
+
+// Landing page after Safepay / JazzCash redirects the browser back:
+//   CLIENT_ORIGIN + CLIENT_PAYMENT_RETURN_PATH?bookingId=…&status=success|failed|pending&ref=…
+// The booking fetched from the backend is the source of truth. We briefly poll
+// while status is still "pending" so a late webhook can confirm payment.
 export default function PaymentReturn() {
   const [params] = useSearchParams()
   const bookingId = params.get('bookingId')
@@ -16,25 +19,48 @@ export default function PaymentReturn() {
 
   const [booking, setBooking] = useState(null)
   const [loading, setLoading] = useState(Boolean(bookingId))
+  const [polls, setPolls] = useState(0)
 
   useEffect(() => {
     if (!bookingId) return
-    getBookingById(bookingId)
-      .then(setBooking)
-      .catch(() => {}) // fall back to the query-string status below
-      .finally(() => setLoading(false))
+    let cancelled = false
+    let timer
+
+    const load = async (attempt) => {
+      try {
+        const b = await getBookingById(bookingId)
+        if (cancelled) return
+        setBooking(b)
+        if (b.status === 'pending' && attempt < MAX_POLLS) {
+          timer = setTimeout(() => {
+            setPolls(attempt + 1)
+            load(attempt + 1)
+          }, POLL_MS)
+          return
+        }
+      } catch {
+        // fall back to the query-string status below
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    load(0)
+    return () => {
+      cancelled = true
+      if (timer) clearTimeout(timer)
+    }
   }, [bookingId])
 
-  if (loading) {
+  if (loading || (booking?.status === 'pending' && polls < MAX_POLLS && status !== 'failed')) {
     return (
       <div className="page-center">
         <div className="spinner" />
+        <p className="muted-note" style={{ marginTop: 16 }}>Confirming your payment…</p>
       </div>
     )
   }
 
-  // Trust the booking's persisted status when we have it; otherwise the flag
-  // the gateway sent us.
   const succeeded = booking ? booking.status === 'confirmed' : status === 'success'
 
   if (succeeded && bookingId) {

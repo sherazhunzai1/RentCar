@@ -77,16 +77,30 @@ export default function MyBookings() {
             const type = getVehicleType(b.vehicleType)
             const TypeIcon = type.icon
             const cancelled = b.status === 'cancelled'
+            const pending = b.status === 'pending'
+            const failed = b.status === 'failed'
+            const statusLabel = cancelled
+              ? 'Cancelled'
+              : pending
+                ? 'Awaiting payment'
+                : failed
+                  ? 'Payment failed'
+                  : 'Confirmed'
+            const statusClass = cancelled || failed
+              ? 'cancelled'
+              : pending
+                ? 'pending'
+                : 'confirmed'
             return (
-              <div key={b.id} className={`card booking-row ${cancelled ? 'is-cancelled' : ''}`}>
+              <div key={b.id} className={`card booking-row ${cancelled || failed ? 'is-cancelled' : ''}`}>
                 <div className="booking-row-main">
                   <div className="booking-row-top">
                     <div className="vehicle-type-badge">
                       <TypeIcon />
                       <span>{type.label}</span>
                     </div>
-                    <span className={`status-pill ${cancelled ? 'cancelled' : 'confirmed'}`}>
-                      {cancelled ? 'Cancelled' : 'Confirmed'}
+                    <span className={`status-pill ${statusClass}`}>
+                      {statusLabel}
                     </span>
                   </div>
 
@@ -122,7 +136,7 @@ export default function MyBookings() {
                   </div>
                   <div className="booking-amount">{formatCurrency(b.totalAmount)}</div>
                   <ChatButton booking={b} label="Message driver" />
-                  {!cancelled && (
+                  {!cancelled && !failed && (
                     <button
                       className="btn btn-danger-ghost btn-sm"
                       onClick={() => handleCancel(b.id)}
