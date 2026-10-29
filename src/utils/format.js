@@ -25,9 +25,10 @@ export function formatShortDate(dateStr) {
   return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
 }
 
-// Converts "14:30" to "2:30 PM".
+// Converts "14:30" to "2:30 PM". Non clock values (e.g. "Flexible" on request bookings) pass through.
 export function formatTime(timeStr) {
   if (!timeStr) return ''
+  if (!/^\d{1,2}:\d{2}$/.test(timeStr)) return timeStr
   const [h, m] = timeStr.split(':').map(Number)
   const period = h >= 12 ? 'PM' : 'AM'
   const hour = h % 12 || 12

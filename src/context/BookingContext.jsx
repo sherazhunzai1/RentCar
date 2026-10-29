@@ -1,7 +1,8 @@
 import { createContext, useContext, useMemo, useState } from 'react'
 
 // Holds the in-progress booking as the passenger moves through
-// listing → seat selection → payment → confirmation.
+// listing → seat selection → payment → confirmation,
+// or ride-request → accepted offer → payment → confirmation.
 const BookingContext = createContext(null)
 
 export function BookingProvider({ children }) {
@@ -12,10 +13,19 @@ export function BookingProvider({ children }) {
       draft,
       // Begin a booking for a vehicle. `opts` = { seats, bookWholeVehicle }.
       startBooking(vehicle, opts = {}) {
-        setDraft({ vehicle, seats: opts.seats || [], bookWholeVehicle: !!opts.bookWholeVehicle })
+        setDraft({
+          type: 'seats',
+          vehicle,
+          seats: opts.seats || [],
+          bookWholeVehicle: !!opts.bookWholeVehicle,
+        })
+      },
+      // Begin payment for an accepted ride-request offer.
+      startOfferPayment({ offer, request }) {
+        setDraft({ type: 'offer', offer, request })
       },
       updateSeats(seats) {
-        setDraft((d) => (d ? { ...d, seats } : d))
+        setDraft((d) => (d && d.type !== 'offer' ? { ...d, seats } : d))
       },
       clearBooking() {
         setDraft(null)

@@ -87,7 +87,9 @@ export default function VehicleListings() {
         <div className="container">
           <h1>Find your ride to the north</h1>
           <p>Search seats and vehicles to Gilgit-Baltistan and from major Pakistani cities.</p>
-          <SearchBar values={filters} onChange={setFilters} onSubmit={applySearch} variant="inline" />
+          <div className="listings-search">
+            <SearchBar values={filters} onChange={setFilters} onSubmit={applySearch} />
+          </div>
         </div>
       </div>
 

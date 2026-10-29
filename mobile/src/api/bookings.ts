@@ -8,11 +8,13 @@ export type Booking = {
   driverId: string
   vehicleId: string
   passengerName?: string
+  gender?: 'male' | 'female' | null
   fromCity?: string
   toCity?: string
   date?: string
   time?: string
   seats: number[]
+  bookingType?: 'seats' | 'whole'
   bookWholeVehicle?: boolean
   status: string
   paymentMethod?: string

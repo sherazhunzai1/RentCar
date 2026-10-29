@@ -135,12 +135,14 @@ export default function Booking() {
               <span>Total</span>
               <strong>{formatCurrency(pricing.total)}</strong>
             </div>
-            <button className="btn btn-primary btn-block btn-lg" onClick={() => navigate('/payment')}>
-              Proceed to Payment <FaArrowRight />
-            </button>
-            <Link to={`/vehicles/${vehicle.id}`} className="btn btn-ghost btn-block">
-              <FaArrowLeft /> Back
-            </Link>
+            <div className="checkout-actions">
+              <button className="btn btn-primary btn-block btn-lg" onClick={() => navigate('/payment')}>
+                Proceed to Payment <FaArrowRight />
+              </button>
+              <Link to={`/vehicles/${vehicle.id}`} className="btn btn-ghost btn-block">
+                <FaArrowLeft /> Back
+              </Link>
+            </div>
           </div>
         </aside>
       </div>

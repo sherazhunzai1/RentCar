@@ -6,13 +6,13 @@ import {
   FaRegClock,
   FaChair,
   FaCheckCircle,
-  FaUserCircle,
   FaIdBadge,
   FaArrowLeft,
   FaCarSide,
 } from 'react-icons/fa'
 import SeatMap from '../components/SeatMap'
 import StarRating from '../components/StarRating'
+import UserAvatar from '../components/UserAvatar'
 import Seo, { SITE } from '../components/Seo'
 import { getVehicleById } from '../services/vehicleService'
 import { getVehicleType } from '../data/constants'
@@ -192,35 +192,38 @@ export default function VehicleDetails() {
                 )}
               </div>
 
-              {available === 0 ? (
+              {available === 0 && (
                 <div className="soldout-banner">This trip is fully booked.</div>
-              ) : (
-                <>
-                  {wholeVehicle && (
-                    <div className="alert alert-info whole-vehicle-note">
-                      You&apos;re booking the <strong>whole vehicle</strong>. Tap a seat to switch to
-                      individual seats instead.
-                    </div>
-                  )}
-                  <SeatMap
-                    totalSeats={vehicle.totalSeats}
-                    bookedSeats={vehicle.bookedSeats}
-                    selectedSeats={wholeVehicle ? [] : selected}
-                    frontSeats={frontSeats}
-                    seatGenders={vehicle.seatGenders || {}}
-                    onToggle={toggleSeat}
-                    layout={type.seatLayout}
-                    maxSelectable={available}
-                  />
-                </>
               )}
+              {wholeVehicle && available > 0 && (
+                <div className="alert alert-info whole-vehicle-note">
+                  You&apos;re booking the <strong>whole vehicle</strong>. Tap a seat to switch to
+                  individual seats instead.
+                </div>
+              )}
+              <SeatMap
+                totalSeats={vehicle.totalSeats}
+                bookedSeats={vehicle.bookedSeats || []}
+                selectedSeats={wholeVehicle || available === 0 ? [] : selected}
+                frontSeats={frontSeats}
+                seatGenders={vehicle.seatGenders || {}}
+                onToggle={available === 0 ? undefined : toggleSeat}
+                layout={type.seatLayout}
+                maxSelectable={available}
+                readOnly={available === 0}
+              />
             </div>
 
             {/* Driver */}
             <div className="card driver-card">
               <h3>Your driver</h3>
               <div className="driver-info">
-                <FaUserCircle className="driver-avatar" />
+                <UserAvatar
+                  src={vehicle.driverAvatarUrl}
+                  name={vehicle.driverName}
+                  size="lg"
+                  className="driver-avatar"
+                />
                 <div>
                   <strong>{vehicle.driverName}</strong>
                   <span className="driver-meta">

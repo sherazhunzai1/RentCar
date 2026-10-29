@@ -47,6 +47,16 @@ export function AuthProvider({ children }) {
         setUser(u)
         return u
       },
+      async uploadAvatar(file) {
+        const u = await authService.uploadAvatar(user.id, file)
+        setUser(u)
+        return u
+      },
+      async deleteAvatar() {
+        const u = await authService.deleteAvatar(user.id)
+        setUser(u)
+        return u
+      },
     }),
     [user, loading],
   )

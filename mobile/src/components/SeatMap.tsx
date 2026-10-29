@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { colors, spacing } from '../theme'
 
@@ -8,9 +8,29 @@ type Props = {
   selectedSeats?: number[]
   frontSeats?: number[]
   seatGenders?: Record<string, string>
-  onToggle: (seat: number) => void
+  onToggle?: (seat: number) => void
   layout?: { hasDriver?: boolean; frontRow?: number; cols?: number }
   maxSelectable?: number
+  readOnly?: boolean
+}
+
+function toSeatSet(list?: number[]) {
+  return new Set(
+    (Array.isArray(list) ? list : [])
+      .map((s) => Number(s))
+      .filter((n) => Number.isInteger(n) && n > 0),
+  )
+}
+
+function normalizeGenders(map?: Record<string, string>) {
+  if (!map || typeof map !== 'object') return {} as Record<string, string>
+  const out: Record<string, string> = {}
+  Object.entries(map).forEach(([key, value]) => {
+    const n = Number(key)
+    if (!Number.isInteger(n) || n < 1) return
+    if (value === 'male' || value === 'female') out[String(n)] = value
+  })
+  return out
 }
 
 export default function SeatMap({
@@ -22,18 +42,24 @@ export default function SeatMap({
   onToggle,
   layout = { hasDriver: true, frontRow: 1, cols: 3 },
   maxSelectable = Infinity,
+  readOnly = false,
 }: Props) {
   const cols = layout.cols ?? 3
   const frontRow = layout.frontRow ?? 1
   const hasDriver = layout.hasDriver ?? true
+  const bookedSet = useMemo(() => toSeatSet(bookedSeats), [bookedSeats])
+  const selectedSet = useMemo(() => toSeatSet(selectedSeats), [selectedSeats])
+  const frontSet = useMemo(() => toSeatSet(frontSeats), [frontSeats])
+  const genders = useMemo(() => normalizeGenders(seatGenders), [seatGenders])
 
   const stateOf = (seat: number) => {
-    if (bookedSeats.includes(seat)) return 'booked'
-    if (selectedSeats.includes(seat)) return 'selected'
+    if (bookedSet.has(seat)) return 'booked'
+    if (selectedSet.has(seat)) return 'selected'
     return 'available'
   }
 
   const press = (seat: number) => {
+    if (readOnly || !onToggle) return
     const st = stateOf(seat)
     if (st === 'booked') return
     if (st === 'available' && selectedSeats.length >= maxSelectable) return
@@ -42,21 +68,32 @@ export default function SeatMap({
 
   const renderSeat = (seat: number) => {
     const st = stateOf(seat)
-    const isFront = frontSeats.includes(seat)
-    const gender = st === 'booked' ? seatGenders[String(seat)] : null
+    const isFront = frontSet.has(seat)
+    const gender = st === 'booked' ? genders[String(seat)] : null
     return (
       <Pressable
         key={seat}
         onPress={() => press(seat)}
-        disabled={st === 'booked'}
+        disabled={st === 'booked' || readOnly}
         style={[
           styles.seat,
           st === 'selected' && styles.seatSelected,
           st === 'booked' && styles.seatBooked,
+          st === 'booked' && gender === 'female' && styles.seatFemale,
+          st === 'booked' && gender === 'male' && styles.seatMale,
           st === 'available' && isFront && styles.seatFront,
         ]}
       >
-        <Text style={[styles.seatNum, st !== 'available' && { color: '#fff' }]}>{seat}</Text>
+        <Text
+          style={[
+            styles.seatNum,
+            (st === 'selected' || st === 'booked') && { color: st === 'booked' && gender ? undefined : '#fff' },
+            gender === 'female' && { color: '#be185d' },
+            gender === 'male' && { color: '#1d4ed8' },
+          ]}
+        >
+          {seat}
+        </Text>
         {st === 'available' && isFront ? <Text style={styles.badge}>F</Text> : null}
         {gender === 'female' ? <Text style={styles.gF}>F</Text> : null}
         {gender === 'male' ? <Text style={styles.gM}>M</Text> : null}
@@ -88,7 +125,7 @@ export default function SeatMap({
         </View>
       ))}
       <Text style={styles.legend}>
-        Tap seats to select · F = front price · booked seats show M/F when known
+        Booked seats are locked · F/M = female/male passenger · F badge = front price
       </Text>
     </View>
   )
@@ -108,12 +145,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   seatSelected: { backgroundColor: colors.primary, borderColor: colors.primaryDark },
-  seatBooked: { backgroundColor: '#94a3b8', borderColor: '#64748b' },
+  seatBooked: { backgroundColor: '#e2e8f0', borderColor: '#94a3b8' },
+  seatFemale: { backgroundColor: '#fdf2f8', borderColor: '#f9a8d4' },
+  seatMale: { backgroundColor: '#eff6ff', borderColor: '#93c5fd' },
   seatFront: { borderColor: colors.accent, backgroundColor: '#f0fdf4' },
   seatNum: { fontWeight: '800', color: colors.primary, fontSize: 15 },
   badge: { position: 'absolute', top: 2, right: 4, fontSize: 9, fontWeight: '800', color: colors.accent },
-  gF: { position: 'absolute', bottom: 2, fontSize: 9, fontWeight: '800', color: '#fff' },
-  gM: { position: 'absolute', bottom: 2, fontSize: 9, fontWeight: '800', color: '#fff' },
+  gF: {
+    position: 'absolute',
+    top: 2,
+    left: 3,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#fff',
+    backgroundColor: '#db2777',
+    paddingHorizontal: 3,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  gM: {
+    position: 'absolute',
+    top: 2,
+    left: 3,
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#fff',
+    backgroundColor: '#2563eb',
+    paddingHorizontal: 3,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
   driver: {
     width: 64,
     height: 52,

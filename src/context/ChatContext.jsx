@@ -13,14 +13,18 @@ export function ChatProvider({ children }) {
   const [unread, setUnread] = useState({}) // { [bookingId]: count }
   const [connected, setConnected] = useState(false)
   const openIdRef = useRef(null)
+  const seenMsgIdsRef = useRef(new Set())
   const userId = user?.id
 
   // Connect the shared socket while logged in; track unread for closed chats.
+  // The server joins each socket to `user:<id>` so chat:message arrives even
+  // when the booking chat modal is closed — badges update without a refresh.
   useEffect(() => {
     if (!isAuthenticated) {
       disconnectSocket()
       setConnected(false)
       setUnread({})
+      seenMsgIdsRef.current = new Set()
       return
     }
     const socket = connectSocket()
@@ -32,7 +36,13 @@ export function ChatProvider({ children }) {
       console.warn('[chat] socket connect_error:', err?.message || err)
 
     const onMessage = (msg) => {
-      if (!msg || msg.senderId === userId) return
+      if (!msg || !msg.id || msg.senderId === userId) return
+      // Dedupe when the same payload is delivered via booking room + user room.
+      if (seenMsgIdsRef.current.has(msg.id)) return
+      seenMsgIdsRef.current.add(msg.id)
+      if (seenMsgIdsRef.current.size > 300) {
+        seenMsgIdsRef.current = new Set([...seenMsgIdsRef.current].slice(-150))
+      }
       // The open chat handles its own messages (and marks them read).
       if (msg.bookingId === openIdRef.current) return
       setUnread((u) => ({ ...u, [msg.bookingId]: (u[msg.bookingId] || 0) + 1 }))

@@ -10,14 +10,21 @@ import {
 import Stepper from '../components/Stepper'
 import { useBooking } from '../context/BookingContext'
 import { createBooking } from '../services/bookingService'
+import { bookRideOffer } from '../services/rideRequestService'
 import { formatCurrency } from '../utils/format'
-import { computePricing } from '../utils/pricing'
+import { computePricing, SERVICE_FEE_RATE } from '../utils/pricing'
 import Seo from '../components/Seo'
 
 const METHODS = [
   { id: 'safepay', label: 'Safepay (Card / Online)', icon: FaShieldAlt },
   { id: 'cash', label: 'Cash on Boarding', icon: FaMoneyBillWave },
 ]
+
+function offerPricing(price) {
+  const subtotal = Number(price) || 0
+  const serviceFee = Math.round(subtotal * SERVICE_FEE_RATE)
+  return { subtotal, serviceFee, total: subtotal + serviceFee }
+}
 
 export default function Payment() {
   const { draft, clearBooking } = useBooking()
@@ -27,33 +34,69 @@ export default function Payment() {
   const [error, setError] = useState('')
   const [processing, setProcessing] = useState(false)
 
-  if (!draft || (!draft.bookWholeVehicle && !draft.seats?.length)) {
+  const isOffer = draft?.type === 'offer'
+
+  if (!draft) {
     return <Navigate to="/vehicles" replace />
   }
 
-  const { vehicle, seats, bookWholeVehicle } = draft
-  const { subtotal, serviceFee, total } = computePricing(vehicle, { seats, bookWholeVehicle })
+  if (!isOffer && !draft.bookWholeVehicle && !draft.seats?.length) {
+    return <Navigate to="/vehicles" replace />
+  }
+
+  if (isOffer && (!draft.offer || !draft.request)) {
+    return <Navigate to="/requests" replace />
+  }
+
+  let subtotal
+  let serviceFee
+  let total
+  let summaryRoute
+  let summaryLine
+
+  if (isOffer) {
+    ;({ subtotal, serviceFee, total } = offerPricing(draft.offer.price))
+    summaryRoute = `${draft.request.fromCity} → ${draft.request.toCity}`
+    summaryLine = `${draft.offer.vehicleName}${
+      draft.offer.vehicleNumber ? ` (${draft.offer.vehicleNumber})` : ''
+    } · ${draft.request.seatsNeeded} seat${
+      draft.request.seatsNeeded > 1 ? 's' : ''
+    } (agreed fare)`
+  } else {
+    const pricing = computePricing(draft.vehicle, {
+      seats: draft.seats,
+      bookWholeVehicle: draft.bookWholeVehicle,
+    })
+    ;({ subtotal, serviceFee, total } = pricing)
+    summaryRoute = `${draft.vehicle.fromCity} → ${draft.vehicle.toCity}`
+    summaryLine = draft.bookWholeVehicle
+      ? `Whole vehicle (${draft.vehicle.totalSeats} seats)`
+      : `Seats ${draft.seats.join(', ')}`
+  }
 
   const handlePay = async (e) => {
     e.preventDefault()
     setError('')
     setProcessing(true)
     try {
-      const booking = await createBooking({
-        vehicle,
-        seats,
-        bookWholeVehicle,
-        payment: { method },
-      })
+      let booking
+      if (isOffer) {
+        booking = await bookRideOffer(draft.offer.id, method)
+      } else {
+        booking = await createBooking({
+          vehicle: draft.vehicle,
+          seats: draft.seats,
+          bookWholeVehicle: draft.bookWholeVehicle,
+          payment: { method },
+        })
+      }
 
-      // Hosted gateway (Safepay / JazzCash): backend returns payment.redirectUrl.
       if (booking?.payment?.redirectUrl) {
         clearBooking()
         window.location.href = booking.payment.redirectUrl
         return
       }
 
-      // Methods that settle immediately (e.g. cash): booking is confirmed.
       clearBooking()
       navigate(`/booking/confirmation/${booking.id}`, { replace: true })
     } catch (err) {
@@ -67,11 +110,13 @@ export default function Payment() {
       ? 'Reserve Seats'
       : `Pay ${formatCurrency(total)} with Safepay`
 
+  const backTo = isOffer ? '/requests' : '/booking'
+
   return (
     <div className="container narrow checkout">
       <Seo title="Payment" noindex />
-      <Stepper active={1} />
-      <h1 className="checkout-title">Payment</h1>
+      {!isOffer && <Stepper active={1} />}
+      <h1 className="checkout-title">{isOffer ? 'Confirm ride request' : 'Payment'}</h1>
 
       {error && <div className="alert alert-error">{error}</div>}
 
@@ -119,11 +164,6 @@ export default function Payment() {
                     <li>Name: Abdul Qudoos · Country: Pakistan · City: Karachi</li>
                     <li>Phone: <code>+92 302 1111111</code> · use a fresh email if card was overused</li>
                   </ul>
-                  <p className="muted-note" style={{ margin: '8px 0 0' }}>
-                    After Pay, Safepay opens a <strong>3D Secure emulator</strong>. Choose a
-                    <strong> successful / authenticated (Y)</strong> result — canceling or picking
-                    failure causes exactly this enrollment error. Same dummy card ≈ 7–8 uses/day.
-                  </p>
                 </div>
               )}
             </div>
@@ -150,10 +190,10 @@ export default function Payment() {
           <div className="card summary-card">
             <h3>Order summary</h3>
             <div className="summary-row">
-              <span>{vehicle.fromCity} → {vehicle.toCity}</span>
+              <span>{summaryRoute}</span>
             </div>
             <div className="summary-row">
-              <span>{bookWholeVehicle ? `Whole vehicle (${vehicle.totalSeats} seats)` : `Seats ${seats.join(', ')}`}</span>
+              <span>{summaryLine}</span>
               <span>{formatCurrency(subtotal)}</span>
             </div>
             <div className="summary-row">
@@ -164,12 +204,14 @@ export default function Payment() {
               <span>Total</span>
               <strong>{formatCurrency(total)}</strong>
             </div>
-            <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={processing} onClick={handlePay}>
-              {processing ? 'Processing…' : (<><FaLock /> {payLabel}</>)}
-            </button>
-            <Link to="/booking" className="btn btn-ghost btn-block">
-              <FaArrowLeft /> Back
-            </Link>
+            <div className="checkout-actions">
+              <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={processing} onClick={handlePay}>
+                {processing ? 'Processing…' : (<><FaLock /> {payLabel}</>)}
+              </button>
+              <Link to={backTo} className="btn btn-ghost btn-block">
+                <FaArrowLeft /> Back
+              </Link>
+            </div>
           </div>
         </aside>
       </div>

@@ -7,6 +7,7 @@ import { getSocket } from '../services/socketService'
 import { getMessages, sendMessage, markRead } from '../services/chatService'
 import { sounds, soundEnabled, setSoundEnabled } from '../services/soundService'
 import { formatDate, formatMessageTime } from '../utils/format'
+import UserAvatar from './UserAvatar'
 
 const isClosedError = (m = '') => /confirm|closed/i.test(m)
 
@@ -229,6 +230,7 @@ function ChatPanel({ booking, onClose, connected }) {
   const otherName =
     messages.find((m) => m.senderId !== user.id)?.senderName ||
     (amPassenger ? booking.driverName || 'Driver' : booking.passengerName || 'Passenger')
+  const otherAvatar = amPassenger ? booking.driverAvatarUrl : booking.passengerAvatarUrl
   const lastMineId = [...messages].reverse().find((m) => m.senderId === user.id)?.id
 
   return (
@@ -241,7 +243,10 @@ function ChatPanel({ booking, onClose, connected }) {
       >
         <header className="chat-header">
           <div className="chat-header-info">
-            <strong>{otherName}</strong>
+            <div className="chat-header-person">
+              <UserAvatar src={otherAvatar} name={otherName} size="md" />
+              <strong>{otherName}</strong>
+            </div>
             <span>
               {booking.fromCity} → {booking.toCity} · {formatDate(booking.date)}
             </span>
@@ -274,8 +279,20 @@ function ChatPanel({ booking, onClose, connected }) {
           ) : (
             messages.map((m) => {
               const mine = m.senderId === user.id
+              const msgAvatar =
+                m.senderId === booking.userId
+                  ? booking.passengerAvatarUrl
+                  : booking.driverAvatarUrl
               return (
                 <div key={m.id} className={`chat-msg ${mine ? 'mine' : 'theirs'}`}>
+                  {!mine && (
+                    <UserAvatar
+                      src={msgAvatar}
+                      name={m.senderName}
+                      size="xs"
+                      className="chat-msg-avatar"
+                    />
+                  )}
                   {!mine && <span className="chat-msg-name">{m.senderName}</span>}
                   <div className="chat-bubble">{m.body}</div>
                   <span className="chat-msg-meta">

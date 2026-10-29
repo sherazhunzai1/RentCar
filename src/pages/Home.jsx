@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  FaSearch,
   FaChair,
   FaCreditCard,
   FaUserPlus,
@@ -59,7 +58,7 @@ export default function Home() {
   return (
     <div className="home">
       <Seo path="/" />
-      {/* Hero */}
+      {/* Hero — search is the dominant action */}
       <section className="hero">
         <div className="container hero-inner">
           <div className="hero-copy">
@@ -74,12 +73,14 @@ export default function Home() {
               and pay online.
             </p>
             <div className="hero-actions">
-              <Link to="/vehicles" className="btn btn-primary btn-lg">
-                <FaSearch /> Find a Ride
-              </Link>
               {!isAuthenticated && (
                 <Link to="/signup" className="btn btn-outline btn-lg">
                   Become a Driver
+                </Link>
+              )}
+              {isAuthenticated && isDriver && (
+                <Link to="/driver/dashboard" className="btn btn-outline btn-lg">
+                  Driver dashboard
                 </Link>
               )}
             </div>

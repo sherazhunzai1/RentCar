@@ -23,8 +23,12 @@ import Payment from './pages/Payment'
 import PaymentReturn from './pages/PaymentReturn'
 import BookingConfirmation from './pages/BookingConfirmation'
 import MyBookings from './pages/MyBookings'
+import MyRideRequests from './pages/MyRideRequests'
+import CreateRideRequest from './pages/CreateRideRequest'
 import DriverDashboard from './pages/DriverDashboard'
+import DriverRideRequests from './pages/DriverRideRequests'
 import PostVehicle from './pages/PostVehicle'
+import ManageVehicle from './pages/ManageVehicle'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 
@@ -83,6 +87,22 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/requests"
+            element={
+              <ProtectedRoute role="passenger">
+                <MyRideRequests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/requests/new"
+            element={
+              <ProtectedRoute role="passenger">
+                <CreateRideRequest />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Driver-only */}
           <Route
@@ -90,6 +110,14 @@ export default function App() {
             element={
               <ProtectedRoute role="driver">
                 <DriverDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/driver/requests"
+            element={
+              <ProtectedRoute role="driver">
+                <DriverRideRequests />
               </ProtectedRoute>
             }
           />
@@ -105,7 +133,7 @@ export default function App() {
             path="/driver/edit/:id"
             element={
               <ProtectedRoute role="driver">
-                <PostVehicle />
+                <ManageVehicle />
               </ProtectedRoute>
             }
           />

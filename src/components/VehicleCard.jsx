@@ -3,6 +3,7 @@ import { FaArrowRight, FaRegClock, FaRegCalendarAlt, FaChair } from 'react-icons
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatShortDate, formatTime } from '../utils/format'
 import StarRating from './StarRating'
+import UserAvatar from './UserAvatar'
 
 export default function VehicleCard({ vehicle }) {
   const type = getVehicleType(vehicle.vehicleType)
@@ -22,6 +23,12 @@ export default function VehicleCard({ vehicle }) {
 
       <h3 className="vehicle-name">{vehicle.vehicleName}</h3>
       <p className="vehicle-number">{vehicle.vehicleNumber}</p>
+      {vehicle.driverName && (
+        <div className="vehicle-card-driver">
+          <UserAvatar src={vehicle.driverAvatarUrl} name={vehicle.driverName} size="sm" />
+          <span>{vehicle.driverName}</span>
+        </div>
+      )}
 
       <div className="route">
         <div className="route-point">

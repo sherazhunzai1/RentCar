@@ -11,49 +11,96 @@ import {
   FaRegClock,
   FaEdit,
   FaTrashAlt,
+  FaHandHoldingUsd,
 } from 'react-icons/fa'
 import EmptyState from '../components/EmptyState'
 import { getVehiclesByDriver, deleteVehicle } from '../services/vehicleService'
 import { getBookingsByDriver } from '../services/bookingService'
+import { getDriverRideRequests } from '../services/rideRequestService'
 import { getVehicleType } from '../data/constants'
 import { formatCurrency, formatDate, formatTime } from '../utils/format'
 import { useAuth } from '../context/AuthContext'
+import { useConfirm } from '../context/ConfirmContext'
+import { useToast } from '../context/ToastContext'
 import ChatButton from '../components/ChatButton'
+import UserAvatar from '../components/UserAvatar'
 import Seo from '../components/Seo'
 
 export default function DriverDashboard() {
   const { user } = useAuth()
+  const confirm = useConfirm()
+  const toast = useToast()
   const navigate = useNavigate()
   const [vehicles, setVehicles] = useState([])
   const [bookings, setBookings] = useState([])
+  const [rideRequests, setRideRequests] = useState([])
   const [loading, setLoading] = useState(true)
 
   const load = () => {
     setLoading(true)
-    Promise.all([getVehiclesByDriver(user.id), getBookingsByDriver(user.id)]).then(
-      ([v, b]) => {
-        setVehicles(v)
-        setBookings(b)
-        setLoading(false)
-      },
-    )
+    Promise.all([
+      getVehiclesByDriver(user.id),
+      getBookingsByDriver(user.id),
+      getDriverRideRequests().catch(() => []),
+    ]).then(([v, b, reqs]) => {
+      setVehicles(v)
+      setBookings(b)
+      setRideRequests(reqs)
+      setLoading(false)
+    })
   }
 
   useEffect(load, [user.id])
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this listing? This cannot be undone.')) return
-    await deleteVehicle(id)
-    setVehicles((list) => list.filter((v) => v.id !== id))
+    const ok = await confirm({
+      title: 'Delete listing?',
+      message: 'This vehicle listing will be removed. This cannot be undone.',
+      confirmLabel: 'Delete',
+      danger: true,
+    })
+    if (!ok) return
+    try {
+      await deleteVehicle(id)
+      setVehicles((list) => list.filter((v) => v.id !== id))
+      toast('Listing deleted.', 'success')
+    } catch (err) {
+      toast(err.message || 'Could not delete listing.', 'error')
+    }
   }
 
   const activeBookings = bookings.filter((b) => b.status === 'confirmed')
-  const seatsBooked = vehicles.reduce((sum, v) => sum + v.bookedSeats.length, 0)
+  const listingBookings = activeBookings.filter((b) => !b.rideRequestId)
+  const bookingById = Object.fromEntries(bookings.map((b) => [b.id, b]))
+
+  // Deals this driver accepted: awaiting passenger payment, or already confirmed.
+  const myAcceptedRequests = rideRequests
+    .map((r) => {
+      const offer = (r.offers || []).find(
+        (o) => o.driverId === user.id && o.status === 'accepted',
+      )
+      if (!offer) return null
+      const booking = r.bookingId ? bookingById[r.bookingId] : null
+      const confirmed = booking?.status === 'confirmed'
+      const awaitingPay = !r.bookingId || booking?.status === 'pending'
+      if (!confirmed && !awaitingPay) return null
+      return { request: r, offer, booking, confirmed }
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      // Confirmed first by booking date, then awaiting by request createdAt.
+      const aKey = a.booking?.createdAt || a.request.createdAt || ''
+      const bKey = b.booking?.createdAt || b.request.createdAt || ''
+      return String(bKey).localeCompare(String(aKey))
+    })
+
+  const seatsBooked = vehicles.reduce((sum, v) => sum + (v.bookedSeats?.length || 0), 0)
   const revenue = activeBookings.reduce((sum, b) => sum + b.totalAmount, 0)
 
   const stats = [
     { icon: FaCar, label: 'Listed vehicles', value: vehicles.length },
     { icon: FaUsers, label: 'Total bookings', value: activeBookings.length },
+    { icon: FaHandHoldingUsd, label: 'Request deals', value: myAcceptedRequests.length },
     { icon: FaChair, label: 'Seats booked', value: seatsBooked },
     { icon: FaMoneyBillWave, label: 'Revenue', value: formatCurrency(revenue) },
   ]
@@ -74,9 +121,14 @@ export default function DriverDashboard() {
           <h1>Welcome, {user.name.split(' ')[0]} 👋</h1>
           <p>Manage your vehicles, routes and incoming bookings.</p>
         </div>
-        <Link to="/driver/post" className="btn btn-primary">
-          <FaPlus /> Post Vehicle
-        </Link>
+        <div className="dashboard-head-actions">
+          <Link to="/driver/requests" className="btn btn-outline">
+            Passenger requests
+          </Link>
+          <Link to="/driver/post" className="btn btn-primary">
+            <FaPlus /> Post Vehicle
+          </Link>
+        </div>
       </div>
 
       {/* Stats */}
@@ -151,7 +203,7 @@ export default function DriverDashboard() {
 
                   <div className="driver-vehicle-actions">
                     <button className="btn btn-ghost btn-sm" onClick={() => navigate(`/driver/edit/${v.id}`)}>
-                      <FaEdit /> Edit
+                      <FaEdit /> Manage
                     </button>
                     <button className="btn btn-danger-ghost btn-sm" onClick={() => handleDelete(v.id)}>
                       <FaTrashAlt /> Delete
@@ -164,14 +216,102 @@ export default function DriverDashboard() {
         )}
       </section>
 
-      {/* Recent bookings */}
+      {/* Accepted / confirmed passenger ride requests */}
       <section className="dashboard-section">
-        <h2>Recent bookings</h2>
-        {activeBookings.length === 0 ? (
+        <div className="dashboard-section-head">
+          <h2>Accepted ride requests</h2>
+          <Link to="/driver/requests" className="btn btn-ghost btn-sm">
+            Browse open requests
+          </Link>
+        </div>
+        {myAcceptedRequests.length === 0 ? (
+          <EmptyState
+            icon={FaHandHoldingUsd}
+            title="No accepted requests yet"
+            message="When you accept a passenger request and they confirm payment, it shows up here."
+            action={
+              <Link to="/driver/requests" className="btn btn-outline">
+                View passenger requests
+              </Link>
+            }
+          />
+        ) : (
+          <div className="request-list">
+            {myAcceptedRequests.map(({ request: r, offer, booking, confirmed }) => {
+              const type = getVehicleType(r.vehicleType)
+              const TypeIcon = type.icon
+              return (
+                <div key={r.id} className="card request-card">
+                  <div className="request-card-top">
+                    <div className="request-passenger">
+                      <UserAvatar
+                        src={r.passengerAvatarUrl}
+                        name={r.passengerName}
+                        size="sm"
+                      />
+                      <span>{r.passengerName}</span>
+                    </div>
+                    <span
+                      className={`status-pill ${confirmed ? 'status-matched' : 'status-open'}`}
+                    >
+                      {confirmed ? 'Confirmed' : 'Awaiting payment'}
+                    </span>
+                  </div>
+                  <div className="request-route">
+                    <strong>{r.fromCity}</strong>
+                    <FaArrowRight className="request-arrow" />
+                    <strong>{r.toCity}</strong>
+                  </div>
+                  <div className="request-meta">
+                    <span className="vehicle-type-badge">
+                      <TypeIcon />
+                      <span>{type.label}</span>
+                    </span>
+                    <span>
+                      <FaRegCalendarAlt /> {formatDate(r.date)}
+                    </span>
+                    <span>
+                      Agreed: <strong>{formatCurrency(offer.price)}</strong>
+                    </span>
+                    {booking ? (
+                      <span>
+                        Total paid: <strong>{formatCurrency(booking.totalAmount)}</strong>
+                      </span>
+                    ) : null}
+                    {offer.vehicleName ? (
+                      <span>
+                        {offer.vehicleName}
+                        {offer.vehicleNumber ? ` · ${offer.vehicleNumber}` : ''}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="offer-actions">
+                    {confirmed && booking ? (
+                      <ChatButton booking={booking} label="Chat with passenger" />
+                    ) : (
+                      <p className="muted-note" style={{ margin: 0 }}>
+                        Waiting for the passenger to pay and confirm this booking.
+                      </p>
+                    )}
+                    {booking?.bookingRef ? (
+                      <span className="muted-note">Ref {booking.bookingRef}</span>
+                    ) : null}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* Recent seat bookings on posted listings */}
+      <section className="dashboard-section">
+        <h2>Recent seat bookings</h2>
+        {listingBookings.length === 0 ? (
           <EmptyState
             icon={FaUsers}
-            title="No bookings yet"
-            message="Bookings made on your vehicles will appear here."
+            title="No seat bookings yet"
+            message="Bookings made on your posted vehicle listings will appear here."
           />
         ) : (
           <div className="table-wrap">
@@ -188,13 +328,18 @@ export default function DriverDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {activeBookings.map((b) => (
+                {listingBookings.map((b) => (
                   <tr key={b.id}>
                     <td><strong>{b.bookingRef}</strong></td>
-                    <td>{b.passengerName}</td>
+                    <td>
+                      <span className="dashboard-party">
+                        <UserAvatar src={b.passengerAvatarUrl} name={b.passengerName} size="sm" />
+                        {b.passengerName}
+                      </span>
+                    </td>
                     <td>{b.fromCity} → {b.toCity}</td>
                     <td>{formatDate(b.date)}</td>
-                    <td>{b.seats.join(', ')}</td>
+                    <td>{Array.isArray(b.seats) ? b.seats.join(', ') : b.seats}</td>
                     <td>{formatCurrency(b.totalAmount)}</td>
                     <td><ChatButton booking={b} label="Open" /></td>
                   </tr>

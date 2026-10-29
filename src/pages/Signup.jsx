@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaUser, FaEnvelope, FaLock, FaPhone, FaIdCard, FaCar, FaUserCheck } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
-import { USER_ROLES, GENDERS } from '../data/constants'
+import { USER_ROLES, GENDERS, VEHICLE_TYPES } from '../data/constants'
 import Seo from '../components/Seo'
 
 export default function Signup() {
@@ -19,11 +19,16 @@ export default function Signup() {
     gender: '',
     licenseNumber: '',
     experience: '',
+    vehicleType: 'car',
+    vehicleName: '',
+    vehicleNumber: '',
   })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value })
+
+  const isDriver = role === USER_ROLES.DRIVER
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -41,6 +46,10 @@ export default function Signup() {
       setError('Please select your gender.')
       return
     }
+    if (isDriver && (!form.vehicleName.trim() || !form.vehicleNumber.trim())) {
+      setError('Please enter your vehicle name/model and registration number.')
+      return
+    }
 
     setSubmitting(true)
     try {
@@ -52,8 +61,6 @@ export default function Signup() {
       setSubmitting(false)
     }
   }
-
-  const isDriver = role === USER_ROLES.DRIVER
 
   return (
     <div className="auth-page">
@@ -158,19 +165,67 @@ export default function Signup() {
           )}
 
           {isDriver && (
-            <div className="form-row driver-fields">
-              <div className="field">
-                <label>License number</label>
-                <div className="input-icon">
-                  <FaIdCard />
-                  <input type="text" placeholder="e.g. LHR-2021-88421" value={form.licenseNumber} onChange={set('licenseNumber')} required />
+            <>
+              <div className="form-row driver-fields">
+                <div className="field">
+                  <label>License number</label>
+                  <div className="input-icon">
+                    <FaIdCard />
+                    <input type="text" placeholder="e.g. LHR-2021-88421" value={form.licenseNumber} onChange={set('licenseNumber')} required />
+                  </div>
+                </div>
+                <div className="field">
+                  <label>Years of experience</label>
+                  <input type="number" min="0" max="60" placeholder="e.g. 5" value={form.experience} onChange={set('experience')} required />
                 </div>
               </div>
+
               <div className="field">
-                <label>Years of experience</label>
-                <input type="number" min="0" max="60" placeholder="e.g. 5" value={form.experience} onChange={set('experience')} required />
+                <label>Your vehicle type</label>
+                <div className="type-picker">
+                  {VEHICLE_TYPES.map((t) => {
+                    const Icon = t.icon
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        className={`type-pick ${form.vehicleType === t.id ? 'active' : ''}`}
+                        onClick={() => setForm({ ...form, vehicleType: t.id })}
+                      >
+                        <Icon />
+                        <span>{t.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+                <small className="field-hint">
+                  Your vehicle for passenger ride requests (separate from posting trip listings).
+                </small>
               </div>
-            </div>
+
+              <div className="form-row">
+                <div className="field">
+                  <label>Vehicle name / model</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Toyota Hiace Grand Cabin"
+                    value={form.vehicleName}
+                    onChange={set('vehicleName')}
+                    required={isDriver}
+                  />
+                </div>
+                <div className="field">
+                  <label>Registration number</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. LES-7781"
+                    value={form.vehicleNumber}
+                    onChange={set('vehicleNumber')}
+                    required={isDriver}
+                  />
+                </div>
+              </div>
+            </>
           )}
 
           <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>

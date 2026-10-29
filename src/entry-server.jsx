@@ -9,7 +9,9 @@ import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom/server'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
+import { ConfirmProvider } from './context/ConfirmContext'
 import { ChatProvider } from './context/ChatContext'
+import { RideAlertProvider } from './context/RideAlertContext'
 import { BookingProvider } from './context/BookingContext'
 import App from './App'
 
@@ -18,11 +20,15 @@ export function render(location) {
     <StaticRouter location={location}>
       <AuthProvider>
         <ToastProvider>
-          <ChatProvider>
-            <BookingProvider>
-              <App />
-            </BookingProvider>
-          </ChatProvider>
+          <ConfirmProvider>
+            <ChatProvider>
+              <RideAlertProvider>
+                <BookingProvider>
+                  <App />
+                </BookingProvider>
+              </RideAlertProvider>
+            </ChatProvider>
+          </ConfirmProvider>
         </ToastProvider>
       </AuthProvider>
     </StaticRouter>,

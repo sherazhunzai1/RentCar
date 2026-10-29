@@ -42,6 +42,7 @@ function serializeVehicle(data) {
   if ('frontSeatPrice' in body) body.frontSeatPrice = numOrNull(body.frontSeatPrice)
   if ('wholeVehiclePrice' in body) body.wholeVehiclePrice = numOrNull(body.wholeVehiclePrice)
   if (Array.isArray(body.frontSeats)) body.frontSeats = body.frontSeats.map(Number)
+  if (Array.isArray(body.offlineSeats)) body.offlineSeats = body.offlineSeats.map(Number)
   return body
 }
 

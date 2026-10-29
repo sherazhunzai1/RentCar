@@ -2,23 +2,28 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   FaCheckCircle,
-  FaArrowRight,
-  FaRegCalendarAlt,
-  FaRegClock,
-  FaChair,
   FaTicketAlt,
   FaListUl,
+  FaPrint,
+  FaFilePdf,
+  FaEnvelope,
 } from 'react-icons/fa'
 import Stepper from '../components/Stepper'
-import { getBookingById } from '../services/bookingService'
-import { getVehicleType } from '../data/constants'
-import { formatCurrency, formatDate, formatTime } from '../utils/format'
+import BookingTicket, { normalizeTicketSeats } from '../components/BookingTicket'
+import {
+  getBookingById,
+  downloadTicketPdf,
+  emailTicket,
+} from '../services/bookingService'
 import Seo from '../components/Seo'
 
 export default function BookingConfirmation() {
   const { id } = useParams()
   const [booking, setBooking] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState('')
+  const [notice, setNotice] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     getBookingById(id)
@@ -26,6 +31,40 @@ export default function BookingConfirmation() {
       .catch(() => setBooking(null))
       .finally(() => setLoading(false))
   }, [id])
+
+  const handlePrint = () => {
+    window.print()
+  }
+
+  const handleDownload = async () => {
+    if (!booking) return
+    setError('')
+    setNotice('')
+    setBusy('pdf')
+    try {
+      await downloadTicketPdf(booking.id, booking.bookingRef)
+      setNotice('Ticket PDF downloaded.')
+    } catch (err) {
+      setError(err.message || 'Could not download PDF.')
+    } finally {
+      setBusy('')
+    }
+  }
+
+  const handleEmail = async () => {
+    if (!booking) return
+    setError('')
+    setNotice('')
+    setBusy('email')
+    try {
+      const res = await emailTicket(booking.id)
+      setNotice(res?.message || 'Ticket PDF sent to your email.')
+    } catch (err) {
+      setError(err.message || 'Could not send email.')
+    } finally {
+      setBusy('')
+    }
+  }
 
   if (loading) {
     return (
@@ -48,20 +87,37 @@ export default function BookingConfirmation() {
     )
   }
 
-  const type = getVehicleType(booking.vehicleType)
-  const TypeIcon = type.icon
+  const seats = normalizeTicketSeats(booking)
+  const status = booking.status || 'confirmed'
 
   return (
-    <div className="container narrow checkout">
+    <div className="container narrow checkout confirm-page">
       <Seo title="Booking Confirmed" noindex />
-      <Stepper active={2} />
+      <div className="no-print">
+        <Stepper active={2} />
+      </div>
 
-      <div className="confirm-hero">
+      <div className="confirm-hero no-print">
         <div className="confirm-check">
           <FaCheckCircle />
         </div>
-        <h1>Booking confirmed!</h1>
-        <p>Your seat{booking.seats.length > 1 ? 's are' : ' is'} reserved. A confirmation has been sent to your email.</p>
+        <h1>
+          {status === 'confirmed'
+            ? 'Booking confirmed!'
+            : status === 'pending'
+              ? 'Payment pending'
+              : `Booking ${status}`}
+        </h1>
+        <p>
+          {seats.length
+            ? `Seat${seats.length > 1 ? 's' : ''} ${seats.join(', ')} ${
+                seats.length > 1 ? 'are' : 'is'
+              } reserved for you.`
+            : 'Your seat is reserved.'}{' '}
+          {status === 'confirmed'
+            ? 'Your boarding ticket is below — a PDF copy is also sent to your email.'
+            : null}
+        </p>
         <div className="booking-ref">
           <FaTicketAlt />
           <span>Booking reference</span>
@@ -69,59 +125,39 @@ export default function BookingConfirmation() {
         </div>
       </div>
 
-      <div className="card confirm-ticket">
-        <div className="ticket-head">
-          <div className="vehicle-type-badge">
-            <TypeIcon />
-            <span>{type.label}</span>
-          </div>
-          <span className="status-pill confirmed">Confirmed</span>
+      {(notice || error) && (
+        <div className={`alert ${error ? 'alert-error' : 'alert-info'} no-print`}>
+          {error || notice}
         </div>
+      )}
 
-        <h3>{booking.vehicleName}</h3>
+      <BookingTicket booking={booking} />
 
-        <div className="route big checkout-route">
-          <div className="route-point">
-            <span className="dot from" />
-            <span>{booking.fromCity}</span>
-          </div>
-          <FaArrowRight className="route-arrow" />
-          <div className="route-point">
-            <span className="dot to" />
-            <span>{booking.toCity}</span>
-          </div>
-        </div>
-
-        <div className="ticket-grid">
-          <div>
-            <small><FaRegCalendarAlt /> Date</small>
-            <strong>{formatDate(booking.date)}</strong>
-          </div>
-          <div>
-            <small><FaRegClock /> Departure</small>
-            <strong>{formatTime(booking.time)}</strong>
-          </div>
-          <div>
-            <small><FaChair /> {booking.bookingType === 'whole' ? 'Booking' : 'Seats'}</small>
-            <strong>
-              {booking.bookingType === 'whole'
-                ? `Whole vehicle (${booking.seats.length} seats)`
-                : booking.seats.join(', ')}
-            </strong>
-          </div>
-          <div>
-            <small>Passenger</small>
-            <strong>{booking.passengerName}</strong>
-          </div>
-        </div>
-
-        <div className="ticket-total">
-          <span>Total paid ({booking.paymentMethod})</span>
-          <strong>{formatCurrency(booking.totalAmount)}</strong>
-        </div>
+      <div className="ticket-toolbar no-print">
+        <button type="button" className="btn btn-outline" onClick={handlePrint}>
+          <FaPrint /> Print ticket
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={handleDownload}
+          disabled={busy === 'pdf'}
+        >
+          <FaFilePdf /> {busy === 'pdf' ? 'Preparing…' : 'Download PDF'}
+        </button>
+        {status === 'confirmed' && (
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={handleEmail}
+            disabled={busy === 'email'}
+          >
+            <FaEnvelope /> {busy === 'email' ? 'Sending…' : 'Email PDF'}
+          </button>
+        )}
       </div>
 
-      <div className="confirm-actions">
+      <div className="confirm-actions no-print">
         <Link to="/my-bookings" className="btn btn-primary btn-lg">
           <FaListUl /> View My Bookings
         </Link>
