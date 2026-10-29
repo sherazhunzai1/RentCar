@@ -59,7 +59,12 @@ export default function Login() {
           </div>
 
           <div className="field">
-            <label>Password</label>
+            <div className="field-label-row">
+              <label>Password</label>
+              <Link to="/forgot-password" className="field-link">
+                Forgot password?
+              </Link>
+            </div>
             <div className="input-icon">
               <FaLock />
               <input

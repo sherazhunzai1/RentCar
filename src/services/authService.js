@@ -38,3 +38,30 @@ export async function getCurrentUser() {
 export async function updateProfile(userId, updates) {
   return asEntity(await api(`/users/${userId}`, { method: 'PATCH', body: updates }), 'user')
 }
+
+/** Request a 6-digit password reset code by email. */
+export async function requestPasswordReset(email) {
+  return api('/auth/forgot-password', {
+    method: 'POST',
+    body: { email },
+    auth: false,
+  })
+}
+
+/** Check the emailed code before showing the new-password form. */
+export async function verifyResetCode({ email, code }) {
+  return api('/auth/verify-reset-code', {
+    method: 'POST',
+    body: { email, code },
+    auth: false,
+  })
+}
+
+/** Set a new password using email + code. */
+export async function resetPassword({ email, code, password }) {
+  return api('/auth/reset-password', {
+    method: 'POST',
+    body: { email, code, password },
+    auth: false,
+  })
+}

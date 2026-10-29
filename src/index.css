@@ -1778,6 +1778,62 @@ button {
   color: var(--muted);
   font-size: 0.92rem;
 }
+.field-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.field-label-row label {
+  margin-bottom: 0;
+}
+.field-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+.field-link:hover {
+  text-decoration: underline;
+}
+.reset-steps {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+.reset-step {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--line);
+}
+.reset-step.active {
+  background: var(--primary);
+}
+.reset-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+.reset-back:hover {
+  color: var(--primary);
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
 .role-toggle {
   display: grid;
   grid-template-columns: 1fr 1fr;
